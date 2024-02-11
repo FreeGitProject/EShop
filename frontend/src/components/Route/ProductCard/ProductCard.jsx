@@ -77,7 +77,7 @@ const ProductCard = ({ data }) => {
             <AiFillHeart
               size={22}
               className="cursor-pointer absolute right-2 top-5"
-              onClick={() => removeFromWishlistHandler(data)}
+              onClick={() => setClick(!click)}
               color={click ? "red" : "#333"}
               title="Remove from wishlist"
             />
@@ -85,7 +85,7 @@ const ProductCard = ({ data }) => {
             <AiOutlineHeart
               size={22}
               className="cursor-pointer absolute right-2 top-5"
-              onClick={() => addToWishlistHandler(data)}
+              onClick={() => setClick(!click)}
               color={click ? "red" : "#333"}
               title="Add to wishlist"
             />
@@ -100,7 +100,7 @@ const ProductCard = ({ data }) => {
           <AiOutlineShoppingCart
             size={25}
             className="cursor-pointer absolute right-2 top-24"
-            onClick={() => addToCartHandler(data._id)}
+            // onClick={() => addToCartHandler(data._id)}
             color="#444"
             title="Add to cart"
           />

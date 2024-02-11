@@ -6,6 +6,25 @@ import ProductsPage from "../src/pages/ProductsPage.jsx";
 import BestSellingPage from "../src/pages/BestSellingPage.jsx";
 import EventsPage from "../src/pages/EventsPage.jsx";
 import FAQPage from "../src/pages/FAQPage.jsx";
+import ProductDetailsPage from "../src/pages/ProductDetailsPage.jsx";
+import ProfilePage from "../src/pages/ProfilePage.jsx";
+import ShopCreatePage from "../src/pages/ShopCreatePage.jsx";
+import ShopActivationPage from "../src/pages/ShopActivationPage.jsx";
+import ShopLoginPage from "../src/pages/ShopLoginPage.jsx";
+
 export {
-    LoginPage,SignupPage,ActivationPage,HomePage,ProductsPage,BestSellingPage,EventsPage,FAQPage,
+  LoginPage,
+  SignupPage,
+  ActivationPage,
+  HomePage,
+  ProductsPage,
+  BestSellingPage,
+  EventsPage,
+  FAQPage,
+  ProductDetailsPage,
+  ProfilePage,
+  ShopCreatePage,
+  ShopActivationPage,
+  ShopLoginPage,
+
 };
