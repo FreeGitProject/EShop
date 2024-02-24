@@ -29,10 +29,10 @@ const ShopInfo = ({ isOwner }) => {
   
 
   const logoutHandler = async () => {
-    // axios.get(`${server}/shop/logout`,{
-    //   withCredentials: true,
-    // });
-    // window.location.reload();
+    axios.get(`${server}/shop/logout`,{
+      withCredentials: true,
+    });
+    window.location.reload();
   };
 
 //   const totalReviewsLength =
