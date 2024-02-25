@@ -21,6 +21,7 @@ import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import Store from "./reducx/store.js";
 import { loadUser, loadSeller } from "./reducx/actions/user.js";
+import { getAllProducts } from "./reducx/actions/product.js";
 //import { loadSeller } from "./reducx/actions/seller.js";
 import { useSelector } from "react-redux";
 import ProtectedRoute from "./routes/ProtectedRoute.js";
@@ -33,7 +34,9 @@ import {
   ShopCreateEvents,
   ShopAllEvents,
   ShopAllCoupouns,
+  ShopPreviewPage,
 } from "./routes/ShopRoutes.js";
+import { getAllEvents } from "./reducx/actions/event.js";
 
 const App = () => {
   useEffect(() => {
@@ -45,6 +48,8 @@ const App = () => {
     //  })
     Store.dispatch(loadUser());
     Store.dispatch(loadSeller());
+    Store.dispatch(getAllProducts());
+    Store.dispatch(getAllEvents());
     // if(isSeller){
     //   return <Navigate to="/shop" replace/>
     // }
@@ -76,6 +81,7 @@ const App = () => {
             </ProtectedRoute>
           }
         />
+         <Route path="/shop/preview/:id" element={<ShopPreviewPage />} />
         {/* shop Routes */}
         <Route path="/shop-create" element={<ShopCreatePage />} />
         <Route path="/shop-login" element={<ShopLoginPage />} />
