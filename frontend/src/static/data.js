@@ -423,7 +423,7 @@ export const navItems = [
       image_Url: [
         {
           public_id: "test",
-          url: "https://www.startech.com.bd/image/cache/catalog/headphone/havit/h763d/h763d-02-500x500.jpg",
+          url: "https://www.freepnglogos.com/uploads/headphones-png/headphones-headphone-png-image-pngpix-10.png",
         },
         {
           public_id: "test",
@@ -491,7 +491,7 @@ export const navItems = [
       image_Url: [
         {
           public_id: "test",
-          url: "https://www.startech.com.bd/image/cache/catalog/headphone/havit/h763d/h763d-02-500x500.jpg",
+          url: "https://www.freepnglogos.com/uploads/headphones-png/headphones-headphone-png-image-pngpix-10.png",
         },
         {
           public_id: "test",
@@ -559,7 +559,7 @@ export const navItems = [
       image_Url: [
         {
           public_id: "test",
-          url: "https://www.startech.com.bd/image/cache/catalog/headphone/havit/h763d/h763d-02-500x500.jpg",
+          url: "https://www.freepnglogos.com/uploads/headphones-png/headphones-headphone-png-image-pngpix-10.png",
         },
         {
           public_id: "test",

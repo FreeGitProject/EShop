@@ -12,7 +12,7 @@ import { BiMenuAltLeft } from "react-icons/bi";
 import { CgProfile } from "react-icons/cg";
 import DropDown from "./DropDown";
 import Navbar from "./Navbar";
-import { useSelector } from "react-redux";
+import { useSelector } from "react-redux"; 
 import Cart from "../cart/Cart.jsx";
 import Wishlist from "../Wishlist/Wishlist.jsx";
 import { RxCross1 } from "react-icons/rx";
@@ -27,14 +27,15 @@ const Header = ({ activeHeading }) => {
   const [openCart, setOpenCart] = useState(false);
   const [openWishlist, setOpenWishlist] = useState(false);
   const [open, setOpen] = useState(false);
+  const {allProducts} = useSelector((state) => state.products);
 
   const handleSearchChange = (e) => {
     const term = e.target.value;
     setSearchTerm(term);
 
     const filteredProducts =
-      productData &&
-      productData.filter((product) =>
+    allProducts &&
+      allProducts.filter((product) =>
         product.name.toLowerCase().includes(term.toLowerCase())
       );
     setSearchData(filteredProducts);
@@ -82,7 +83,7 @@ const Header = ({ activeHeading }) => {
                       <Link to={`/product/${Product_name}`}>
                         <div className="w-full flex items-start-py-3">
                           <img
-                            src={`${i.image_Url[0]?.url}`}
+                            src={`${backend_url}${i.images[0]}`}
                             alt=""
                             className="w-[40px] h-[40px] mr-[10px]"
                           />
