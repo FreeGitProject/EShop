@@ -25,7 +25,15 @@ import { loadUser, loadSeller } from "./reducx/actions/user.js";
 import { useSelector } from "react-redux";
 import ProtectedRoute from "./routes/ProtectedRoute.js";
 import SellerProtectedRoute from "./routes/SellerProtectedRoute.js";
-import { ShopHomePage, ShopDashboardPage,ShopCreateProduct ,ShopAllProducts,ShopCreateEvents,ShopAllEvents} from "./routes/ShopRoutes.js";
+import {
+  ShopHomePage,
+  ShopDashboardPage,
+  ShopCreateProduct,
+  ShopAllProducts,
+  ShopCreateEvents,
+  ShopAllEvents,
+  ShopAllCoupouns,
+} from "./routes/ShopRoutes.js";
 
 const App = () => {
   useEffect(() => {
@@ -87,7 +95,7 @@ const App = () => {
             </SellerProtectedRoute>
           }
         />
-         <Route
+        <Route
           path="/dashboard-create-product"
           element={
             <SellerProtectedRoute>
@@ -95,7 +103,7 @@ const App = () => {
             </SellerProtectedRoute>
           }
         />
-         <Route
+        <Route
           path="/dashboard-products"
           element={
             <SellerProtectedRoute>
@@ -103,7 +111,7 @@ const App = () => {
             </SellerProtectedRoute>
           }
         />
-         <Route
+        <Route
           path="/dashboard-create-event"
           element={
             <SellerProtectedRoute>
@@ -111,7 +119,7 @@ const App = () => {
             </SellerProtectedRoute>
           }
         />
-          <Route
+        <Route
           path="/dashboard-events"
           element={
             <SellerProtectedRoute>
@@ -119,7 +127,14 @@ const App = () => {
             </SellerProtectedRoute>
           }
         />
-
+        <Route
+          path="/dashboard-coupouns"
+          element={
+            <SellerProtectedRoute>
+              <ShopAllCoupouns />
+            </SellerProtectedRoute>
+          }
+        />
       </Routes>
 
       <ToastContainer
