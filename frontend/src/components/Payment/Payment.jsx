@@ -111,7 +111,8 @@ const Payment = () => {
       const { data } = await axios.post(
         `${server}/payment/process`,
         paymentData,
-        config
+        config,
+       // {withCredentials:true}
       );
 
       const client_secret = data.client_secret;
