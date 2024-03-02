@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import "./App.css";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import {
@@ -15,6 +15,8 @@ import {
   ShopCreatePage,
   ShopActivationPage,
   ShopLoginPage,
+  CheckoutPage,
+  PaymentPage,
 } from "./Routes.js";
 //import {LoginPage} from "./routes/Routes.js";
 import { ToastContainer } from "react-toastify";
@@ -37,8 +39,17 @@ import {
   ShopPreviewPage,
 } from "./routes/ShopRoutes.js";
 import { getAllEvents } from "./reducx/actions/event.js";
-
+import axios from "axios";
+import { server } from "./server.js";
+import { Elements } from "@stripe/react-stripe-js";
+import { loadStripe } from "@stripe/stripe-js";
 const App = () => {
+  const [stripeApikey, setStripeApiKey] = useState("");
+
+  async function getStripeApikey() {
+    const { data } = await axios.get(`${server}/payment/stripeapikey`);
+    setStripeApiKey(data.stripeApikey);
+  }
   useEffect(() => {
     //  axios.get(`${server}/user/getuser`,{withCredentials:true}).then((res)=>{
     //   toast.success(res.data.message);
@@ -50,12 +61,28 @@ const App = () => {
     Store.dispatch(loadSeller());
     Store.dispatch(getAllProducts());
     Store.dispatch(getAllEvents());
+    getStripeApikey();
     // if(isSeller){
     //   return <Navigate to="/shop" replace/>
     // }
   }, []);
+  console.log(stripeApikey)
   return (
     <BrowserRouter>
+    {stripeApikey && (
+        <Elements stripe={loadStripe(stripeApikey)}>
+          <Routes>
+            <Route
+              path="/payment"
+              element={
+                <ProtectedRoute>
+                  <PaymentPage />
+                </ProtectedRoute>
+              }
+            />
+          </Routes>
+        </Elements>
+      )}
       <Routes>
         <Route path="/" element={<HomePage />} />
         <Route path="/login" element={<LoginPage />} />
@@ -73,6 +100,22 @@ const App = () => {
         <Route path="/best-selling" element={<BestSellingPage />} />
         <Route path="/events" element={<EventsPage />} />
         <Route path="/faq" element={<FAQPage />} />
+        <Route
+          path="/checkout"
+          element={
+            <ProtectedRoute>
+              <CheckoutPage />
+            </ProtectedRoute>
+          }
+        />
+          {/* <Route
+              path="/payment"
+              element={
+                <ProtectedRoute>
+                  <PaymentPage />
+                </ProtectedRoute>
+              }
+            /> */}
         <Route
           path="/Profile"
           element={
