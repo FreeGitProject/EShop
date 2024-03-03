@@ -4,7 +4,7 @@ const app = express();
 const cookieParser = require("cookie-parser");
 const bodyParser = require("body-parser");
 const cors = require("cors");
-
+const path = require("path");
 // app.route('/').get((req,res)=>{
 //   res.json({msg:"Listening on port 8000"});
 // })
@@ -16,13 +16,15 @@ app.use(cookieParser());
 //   credentials:true,
 // }));
 app.use(cors({
-  origin:"https://e-shop-ugyz.vercel.app/",
+  origin:'https://e-shop-ugyz.vercel.app',
   credentials:true,
 }));
 app.use("/test", (req, res) => {
   res.send("Hello world!");
 });
-app.use("/",express.static("uploads"));
+//app.use("/",express.static("uploads"));
+app.use("/",express.static(path.join(__dirname,"uploads")));
+
 app.use(bodyParser.urlencoded({ extended: true, limit: "50mb" }));
 
 
