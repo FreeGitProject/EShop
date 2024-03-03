@@ -19,6 +19,7 @@ import {
   PaymentPage,
   OrderSuccessPage,
   OrderDetailsPage,
+  TrackOrderPage,
 } from "./Routes.js";
 //import {LoginPage} from "./routes/Routes.js";
 import { ToastContainer } from "react-toastify";
@@ -70,7 +71,7 @@ const App = () => {
     //   return <Navigate to="/shop" replace/>
     // }
   }, []);
-  console.log(stripeApikey)
+ // console.log(stripeApikey)
   return (
     <BrowserRouter>
     {stripeApikey && (
@@ -129,11 +130,20 @@ const App = () => {
             </ProtectedRoute>
           }
         />
+        {/* User Order Detail */}
          <Route
           path="/user/order/:id"
           element={
             <ProtectedRoute>
               <OrderDetailsPage />
+            </ProtectedRoute>
+          }
+        />
+         <Route
+          path="/user/track/order/:id"
+          element={
+            <ProtectedRoute>
+              <TrackOrderPage />
             </ProtectedRoute>
           }
         />
