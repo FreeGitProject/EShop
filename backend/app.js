@@ -11,8 +11,12 @@ const cors = require("cors");
 
 app.use(express.json());
 app.use(cookieParser());
+// app.use(cors({
+//   origin:"http://localhost:3000",
+//   credentials:true,
+// }));
 app.use(cors({
-  origin:"http://localhost:3000",
+  origin:"https://e-shop-ugyz-gh314qzb0-avinash-guptas-projects.vercel.app/",
   credentials:true,
 }));
 app.use("/test", (req, res) => {
