@@ -18,11 +18,12 @@ const CountDown = ({ data }) => {
     // ) {
     //   axios.delete(`${server}/event/delete-shop-event/${data._id}`);
     // }
+    //text
     return () => clearTimeout(timer);
   });
 
   function calculateTimeLeft() {
-    const difference = +new Date('2024-02-15') - +new Date();
+    const difference = +new Date(data.Finish_Date) - +new Date();
     let timeLeft = {};
 
     if (difference > 0) {
