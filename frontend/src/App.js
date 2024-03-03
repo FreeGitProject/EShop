@@ -18,6 +18,7 @@ import {
   CheckoutPage,
   PaymentPage,
   OrderSuccessPage,
+  OrderDetailsPage,
 } from "./Routes.js";
 //import {LoginPage} from "./routes/Routes.js";
 import { ToastContainer } from "react-toastify";
@@ -38,6 +39,8 @@ import {
   ShopAllEvents,
   ShopAllCoupouns,
   ShopPreviewPage,
+  ShopAllOrders, 
+  ShopOrderDetails,
 } from "./routes/ShopRoutes.js";
 import { getAllEvents } from "./reducx/actions/event.js";
 import axios from "axios";
@@ -126,6 +129,14 @@ const App = () => {
             </ProtectedRoute>
           }
         />
+         <Route
+          path="/user/order/:id"
+          element={
+            <ProtectedRoute>
+              <OrderDetailsPage />
+            </ProtectedRoute>
+          }
+        />
          <Route path="/shop/preview/:id" element={<ShopPreviewPage />} />
         {/* shop Routes */}
         <Route path="/shop-create" element={<ShopCreatePage />} />
@@ -151,6 +162,22 @@ const App = () => {
           element={
             <SellerProtectedRoute>
               <ShopCreateProduct />
+            </SellerProtectedRoute>
+          }
+        />
+         <Route
+          path="/dashboard-orders"
+          element={
+            <SellerProtectedRoute>
+              <ShopAllOrders />
+            </SellerProtectedRoute>
+          }
+        />
+         <Route
+          path="/order/:id"
+          element={
+            <SellerProtectedRoute>
+              <ShopOrderDetails />
             </SellerProtectedRoute>
           }
         />
