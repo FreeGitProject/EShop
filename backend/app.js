@@ -16,7 +16,7 @@ app.use(cookieParser());
 //   credentials:true,
 // }));
 app.use(cors({
-  origin:"https://e-shop-ugyz-gh314qzb0-avinash-guptas-projects.vercel.app/",
+  origin:"https://e-shop-ugyz.vercel.app/",
   credentials:true,
 }));
 app.use("/test", (req, res) => {
