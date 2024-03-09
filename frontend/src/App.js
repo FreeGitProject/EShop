@@ -44,6 +44,7 @@ import {
   ShopOrderDetails,
   ShopAllRefunds,
   ShopSettingsPage,
+  ShopWithDrawMoneyPage,
 } from "./routes/ShopRoutes.js";
 import { getAllEvents } from "./reducx/actions/event.js";
 import axios from "axios";
@@ -238,6 +239,14 @@ const App = () => {
           element={
             <SellerProtectedRoute>
               <ShopAllCoupouns />
+            </SellerProtectedRoute>
+          }
+        />
+          <Route
+          path="/dashboard-withdraw-money"
+          element={
+            <SellerProtectedRoute>
+              <ShopWithDrawMoneyPage />
             </SellerProtectedRoute>
           }
         />
