@@ -16,6 +16,7 @@ import CheckoutPage from "../src/pages/CheckoutPage.jsx";
  import OrderSuccessPage from "../src/pages/OrderSuccessPage.jsx";
  import OrderDetailsPage from "../src/pages/OrderDetailsPage.jsx";
  import TrackOrderPage from "../src/pages/TrackOrderPage.jsx";
+ import UserInbox from "../src/pages/UserInbox.jsx";
  
 
 export {
@@ -37,4 +38,5 @@ export {
   OrderSuccessPage,
   OrderDetailsPage,
   TrackOrderPage,
+  UserInbox,
 };

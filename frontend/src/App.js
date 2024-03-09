@@ -20,6 +20,7 @@ import {
   OrderSuccessPage,
   OrderDetailsPage,
   TrackOrderPage,
+  UserInbox,
 } from "./Routes.js";
 //import {LoginPage} from "./routes/Routes.js";
 import { ToastContainer } from "react-toastify";
@@ -40,11 +41,12 @@ import {
   ShopAllEvents,
   ShopAllCoupouns,
   ShopPreviewPage,
-  ShopAllOrders, 
+  ShopAllOrders,
   ShopOrderDetails,
   ShopAllRefunds,
   ShopSettingsPage,
   ShopWithDrawMoneyPage,
+  ShopInboxPage,
 } from "./routes/ShopRoutes.js";
 import { getAllEvents } from "./reducx/actions/event.js";
 import axios from "axios";
@@ -74,10 +76,10 @@ const App = () => {
     //   return <Navigate to="/shop" replace/>
     // }
   }, []);
- // console.log(stripeApikey)
+  // console.log(stripeApikey)
   return (
     <BrowserRouter>
-    {stripeApikey && (
+      {stripeApikey && (
         <Elements stripe={loadStripe(stripeApikey)}>
           <Routes>
             <Route
@@ -116,8 +118,8 @@ const App = () => {
             </ProtectedRoute>
           }
         />
-         <Route path="/order/success" element={<OrderSuccessPage />} />
-          {/* <Route
+        <Route path="/order/success" element={<OrderSuccessPage />} />
+        {/* <Route
               path="/payment"
               element={
                 <ProtectedRoute>
@@ -133,8 +135,16 @@ const App = () => {
             </ProtectedRoute>
           }
         />
+        <Route
+          path="/inbox"
+          element={
+            <ProtectedRoute>
+              <UserInbox />
+            </ProtectedRoute>
+          }
+        />
         {/* User Order Detail */}
-         <Route
+        <Route
           path="/user/order/:id"
           element={
             <ProtectedRoute>
@@ -142,7 +152,7 @@ const App = () => {
             </ProtectedRoute>
           }
         />
-         <Route
+        <Route
           path="/user/track/order/:id"
           element={
             <ProtectedRoute>
@@ -150,7 +160,7 @@ const App = () => {
             </ProtectedRoute>
           }
         />
-         <Route path="/shop/preview/:id" element={<ShopPreviewPage />} />
+        <Route path="/shop/preview/:id" element={<ShopPreviewPage />} />
         {/* shop Routes */}
         <Route path="/shop-create" element={<ShopCreatePage />} />
         <Route path="/shop-login" element={<ShopLoginPage />} />
@@ -162,7 +172,7 @@ const App = () => {
             </SellerProtectedRoute>
           }
         />
-         <Route
+        <Route
           path="/settings"
           element={
             <SellerProtectedRoute>
@@ -186,7 +196,7 @@ const App = () => {
             </SellerProtectedRoute>
           }
         />
-         <Route
+        <Route
           path="/dashboard-orders"
           element={
             <SellerProtectedRoute>
@@ -194,7 +204,7 @@ const App = () => {
             </SellerProtectedRoute>
           }
         />
-         <Route
+        <Route
           path="/dashboard-refunds"
           element={
             <SellerProtectedRoute>
@@ -202,7 +212,7 @@ const App = () => {
             </SellerProtectedRoute>
           }
         />
-         <Route
+        <Route
           path="/order/:id"
           element={
             <SellerProtectedRoute>
@@ -242,11 +252,19 @@ const App = () => {
             </SellerProtectedRoute>
           }
         />
-          <Route
+        <Route
           path="/dashboard-withdraw-money"
           element={
             <SellerProtectedRoute>
               <ShopWithDrawMoneyPage />
+            </SellerProtectedRoute>
+          }
+        />
+        <Route
+          path="/dashboard-messages"
+          element={
+            <SellerProtectedRoute>
+              <ShopInboxPage />
             </SellerProtectedRoute>
           }
         />
