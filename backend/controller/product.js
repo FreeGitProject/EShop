@@ -1,5 +1,5 @@
 const express = require("express");
-const { isSeller ,isAuthenticated} = require("../middleware/auth");
+const { isSeller ,isAuthenticated,isAdmin} = require("../middleware/auth");
 const router = express.Router();
 const Product = require("../model/product");
 const Shop = require("../model/shop");
@@ -163,6 +163,26 @@ console.log("review");
       });
     } catch (error) {
       return next(new ErrorHandler(error, 400));
+    }
+  })
+);
+
+// all products --- for admin
+router.get(
+  "/admin-all-products",
+  isAuthenticated,
+  isAdmin("Admin"),
+  catchAsyncErrors(async (req, res, next) => {
+    try {
+      const products = await Product.find().sort({
+        createdAt: -1,
+      });
+      res.status(201).json({
+        success: true,
+        products,
+      });
+    } catch (error) {
+      return next(new ErrorHandler(error.message, 500));
     }
   })
 );

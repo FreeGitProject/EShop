@@ -31,7 +31,7 @@ const Header = ({ activeHeading }) => {
   const [openWishlist, setOpenWishlist] = useState(false);
   const [open, setOpen] = useState(false);
   const {allProducts} = useSelector((state) => state.products);
-console.log("cartitem",cart)
+console.log("header",isAuthenticated, user,cart)
   const handleSearchChange = (e) => {
     const term = e.target.value;
     setSearchTerm(term);

@@ -29,8 +29,8 @@ import Store from "./reducx/store.js";
 import { loadUser, loadSeller } from "./reducx/actions/user.js";
 import { getAllProducts } from "./reducx/actions/product.js";
 //import { loadSeller } from "./reducx/actions/seller.js";
-import { useSelector } from "react-redux";
 import ProtectedRoute from "./routes/ProtectedRoute.js";
+import ProtectedAdminRoute from "./routes/ProtectedAdminRoute.js";
 import SellerProtectedRoute from "./routes/SellerProtectedRoute.js";
 import {
   ShopHomePage,
@@ -48,6 +48,15 @@ import {
   ShopWithDrawMoneyPage,
   ShopInboxPage,
 } from "./routes/ShopRoutes.js";
+import {
+  AdminDashboardPage,
+  AdminDashboardUsers,
+  AdminDashboardSellers,
+  AdminDashboardOrders,
+   AdminDashboardProducts,
+   AdminDashboardEvents,
+  // AdminDashboardWithdraw
+} from "./routes/AdminRoutes";
 import { getAllEvents } from "./reducx/actions/event.js";
 import axios from "axios";
 import { server } from "./server.js";
@@ -266,6 +275,55 @@ const App = () => {
             <SellerProtectedRoute>
               <ShopInboxPage />
             </SellerProtectedRoute>
+          }
+        />
+        {/* Admin Routes */}
+        <Route
+          path="/admin/dashboard"
+          element={
+            //  <ProtectedAdminRoute>
+            <AdminDashboardPage />
+            // </ProtectedAdminRoute>
+          }
+        />
+         <Route
+          path="/admin-users"
+          element={
+           // <ProtectedAdminRoute>
+              <AdminDashboardUsers />
+           // </ProtectedAdminRoute>
+          }
+        />
+        <Route
+          path="/admin-sellers"
+          element={
+           // <ProtectedAdminRoute>
+              <AdminDashboardSellers />
+           // </ProtectedAdminRoute>
+          }
+        />
+        <Route
+          path="/admin-orders"
+          element={
+         //   <ProtectedAdminRoute>
+              <AdminDashboardOrders />
+         //   </ProtectedAdminRoute>
+          }
+        />
+        <Route
+          path="/admin-products"
+          element={
+            //<ProtectedAdminRoute>
+              <AdminDashboardProducts />
+           // </ProtectedAdminRoute>
+          }
+        />
+         <Route
+          path="/admin-events"
+          element={
+           // <ProtectedAdminRoute>
+              <AdminDashboardEvents />
+           // </ProtectedAdminRoute>
           }
         />
       </Routes>

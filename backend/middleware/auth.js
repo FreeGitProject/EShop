@@ -33,11 +33,11 @@ exports.isSeller = catchAsyncErrors(async(req,res,next) => {
 });
 
 
-// exports.isAdmin = (...roles) => {
-//     return (req,res,next) => {
-//         if(!roles.includes(req.user.role)){
-//             return next(new ErrorHandler(`${req.user.role} can not access this resources!`))
-//         };
-//         next();
-//     }
-// }
+exports.isAdmin = (...roles) => {
+    return (req,res,next) => {
+        if(!roles.includes(req.user.role)){
+            return next(new ErrorHandler(`${req.user.role} can not access this resources!`))
+        };
+        next();
+    }
+}
