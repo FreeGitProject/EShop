@@ -3,29 +3,29 @@ import styles from "../../../styles/styles.js";
 import CountDown from "./CountDown.jsx";
 import { Link } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
-//import { addTocart } from "../../redux/actions/cart";
+import { addTocart } from "../../../reducx/actions/cart.js";
 import { toast } from "react-toastify";
 import { backend_url } from "../../../server.js";
 
 const EventCard = ({active,data}) => {
-  console.log(data);
-  //   const { cart } = useSelector((state) => state.cart);
-  //   const dispatch = useDispatch();
+  console.log("eventCart",data);
+    const { cart } = useSelector((state) => state.cart);
+    const dispatch = useDispatch();
 
-  //   const addToCartHandler = (data) => {
-  //     const isItemExists = cart && cart.find((i) => i._id === data._id);
-  //     if (isItemExists) {
-  //       toast.error("Item already in cart!");
-  //     } else {
-  //       if (data.stock < 1) {
-  //         toast.error("Product stock limited!");
-  //       } else {
-  //         const cartData = { ...data, qty: 1 };
-  //         dispatch(addTocart(cartData));
-  //         toast.success("Item added to cart successfully!");
-  //       }
-  //     }
-  //   }
+    const addToCartHandler = (data) => {
+      const isItemExists = cart && cart.find((i) => i._id === data._id);
+      if (isItemExists) {
+        toast.error("Item already in cart!");
+      } else {
+        if (data.stock < 1) {
+          toast.error("Product stock limited!");
+        } else {
+          const cartData = { ...data, qty: 1 };
+          dispatch(addTocart(cartData));
+          toast.success("Item added to cart successfully!");
+        }
+      }
+    }
   return (
     <div className={`w-full block bg-white rounded-lg ${
       active ? "unset" : "mb-12"
@@ -53,7 +53,7 @@ const EventCard = ({active,data}) => {
         </div>
         <CountDown data={data}/>
         <br />
-        {/* <div className="flex items-center">
+        <div className="flex items-center">
           <Link to={`/product/${data._id}?isEvent=true`}>
             <div className={`${styles.button} text-[#fff]`}>See Details</div>
           </Link>
@@ -63,7 +63,7 @@ const EventCard = ({active,data}) => {
           >
             Add to cart
           </div>
-        </div> */}
+        </div>
       </div>
     </div>
   );

@@ -2,11 +2,14 @@
   "name": "e-shop-tutorial",
   "version": "1.0.0",
   "description": "",
-  "main": "backend/server.js",
+  "main": "server.js",
+  "engines": {
+    "node":"18.x"
+  },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "dev": "nodemon backend/server.js",
-    "start": "node backend/server.js"
+    "dev": "nodemon server.js",
+    "start": "node server.js"
   },
   "author": "avinash",
   "license": "ISC",
@@ -21,6 +24,7 @@
     "mongoose": "^8.1.0",
     "multer": "^1.4.5-lts.1",
     "nodemailer": "^6.9.8",
-    "nodemon": "^3.0.3"
+    "nodemon": "^3.0.3",
+    "stripe": "^14.19.0"
   }
 }

@@ -18,6 +18,7 @@ const CountDown = ({ data }) => {
     // ) {
     //   axios.delete(`${server}/event/delete-shop-event/${data._id}`);
     // }
+    //text
     return () => clearTimeout(timer);
   });
 
