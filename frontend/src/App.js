@@ -42,6 +42,7 @@ import {
   ShopPreviewPage,
   ShopAllOrders, 
   ShopOrderDetails,
+  ShopAllRefunds,
 } from "./routes/ShopRoutes.js";
 import { getAllEvents } from "./reducx/actions/event.js";
 import axios from "axios";
@@ -180,6 +181,14 @@ const App = () => {
           element={
             <SellerProtectedRoute>
               <ShopAllOrders />
+            </SellerProtectedRoute>
+          }
+        />
+         <Route
+          path="/dashboard-refunds"
+          element={
+            <SellerProtectedRoute>
+              <ShopAllRefunds />
             </SellerProtectedRoute>
           }
         />

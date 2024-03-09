@@ -11,14 +11,14 @@ const path = require("path");
 
 app.use(express.json());
 app.use(cookieParser());
-// app.use(cors({
-//   origin:"http://localhost:3000",
-//   credentials:true,
-// }));
 app.use(cors({
-  origin:'https://e-shop-ugyz.vercel.app',
+  origin:"http://localhost:3000",
   credentials:true,
 }));
+// app.use(cors({
+//   origin:'https://e-shop-ugyz.vercel.app',
+//   credentials:true,
+// }));
 app.use("/test", (req, res) => {
   res.send("Hello world!");
 });
