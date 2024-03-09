@@ -43,6 +43,7 @@ import {
   ShopAllOrders, 
   ShopOrderDetails,
   ShopAllRefunds,
+  ShopSettingsPage,
 } from "./routes/ShopRoutes.js";
 import { getAllEvents } from "./reducx/actions/event.js";
 import axios from "axios";
@@ -157,6 +158,14 @@ const App = () => {
           element={
             <SellerProtectedRoute>
               <ShopHomePage />
+            </SellerProtectedRoute>
+          }
+        />
+         <Route
+          path="/settings"
+          element={
+            <SellerProtectedRoute>
+              <ShopSettingsPage />
             </SellerProtectedRoute>
           }
         />

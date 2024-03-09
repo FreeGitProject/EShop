@@ -62,7 +62,7 @@ const ProfileContent = ({ active }) => {
         withCredentials: true,
       })
       .then((response) => {
-        window.location.reload();
+        //window.location.reload();
          dispatch(loadUser());
          toast.success("avatar updated successfully!");
       })
