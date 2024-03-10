@@ -419,9 +419,9 @@ router.delete(
         );
       }
 
-      const imageId = user.avatar.public_id;
+      // const imageId = user.avatar.public_id;
 
-      await cloudinary.v2.uploader.destroy(imageId);
+      // await cloudinary.v2.uploader.destroy(imageId);
 
       await User.findByIdAndDelete(req.params.id);
 

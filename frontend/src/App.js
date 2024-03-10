@@ -55,7 +55,7 @@ import {
   AdminDashboardOrders,
    AdminDashboardProducts,
    AdminDashboardEvents,
-  // AdminDashboardWithdraw
+   AdminDashboardWithdraw
 } from "./routes/AdminRoutes";
 import { getAllEvents } from "./reducx/actions/event.js";
 import axios from "axios";
@@ -281,49 +281,57 @@ const App = () => {
         <Route
           path="/admin/dashboard"
           element={
-            //  <ProtectedAdminRoute>
+              <ProtectedAdminRoute>
             <AdminDashboardPage />
-            // </ProtectedAdminRoute>
+             </ProtectedAdminRoute>
           }
         />
          <Route
           path="/admin-users"
           element={
-           // <ProtectedAdminRoute>
+            <ProtectedAdminRoute>
               <AdminDashboardUsers />
-           // </ProtectedAdminRoute>
+            </ProtectedAdminRoute>
           }
         />
         <Route
           path="/admin-sellers"
           element={
-           // <ProtectedAdminRoute>
+            <ProtectedAdminRoute>
               <AdminDashboardSellers />
-           // </ProtectedAdminRoute>
+            </ProtectedAdminRoute>
           }
         />
         <Route
           path="/admin-orders"
           element={
-         //   <ProtectedAdminRoute>
+            <ProtectedAdminRoute>
               <AdminDashboardOrders />
-         //   </ProtectedAdminRoute>
+            </ProtectedAdminRoute>
           }
         />
         <Route
           path="/admin-products"
           element={
-            //<ProtectedAdminRoute>
+            <ProtectedAdminRoute>
               <AdminDashboardProducts />
-           // </ProtectedAdminRoute>
+            </ProtectedAdminRoute>
           }
         />
          <Route
           path="/admin-events"
           element={
-           // <ProtectedAdminRoute>
+            <ProtectedAdminRoute>
               <AdminDashboardEvents />
-           // </ProtectedAdminRoute>
+            </ProtectedAdminRoute>
+          }
+        />
+         <Route
+          path="/admin-withdraw-request"
+          element={
+            <ProtectedAdminRoute>
+              <AdminDashboardWithdraw />
+            </ProtectedAdminRoute>
           }
         />
       </Routes>
