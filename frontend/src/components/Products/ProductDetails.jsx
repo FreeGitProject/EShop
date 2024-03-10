@@ -7,7 +7,7 @@ import {
 } from "react-icons/ai";
 import { Link, useNavigate } from "react-router-dom";
 import styles from "../../styles/styles";
-import { backend_url } from "../../server";
+import { backend_url, server } from "../../server";
 import { useDispatch, useSelector } from "react-redux";
 import { getAllProductsShop } from "../../reducx/actions/product";
 import {
@@ -22,11 +22,12 @@ import axios from "axios";
 const ProductDetails = ({ data }) => {
   const { wishlist } = useSelector((state) => state.wishlist);
   const { cart } = useSelector((state) => state.cart);
+  const { user, isAuthenticated } = useSelector((state) => state.user);
+  const { products } = useSelector((state) => state.products);
   const [count, setCount] = useState(1);
   const [click, setClick] = useState(false);
   const [select, setSelect] = useState(0);
   const navigate = useNavigate();
-  const { products } = useSelector((state) => state.products);
 
   const dispatch = useDispatch();
   console.log("ProductDetails",products, data);
@@ -89,8 +90,26 @@ const ProductDetails = ({ data }) => {
 
   const averageRating = avg.toFixed(2);
 
-  const handleMessageSubmit = () => {
-    navigate("/inbox?consersation=507");
+  const handleMessageSubmit = async () => {
+    if (isAuthenticated) {
+      const groupTitle = data._id + user._id;
+      const userId = user._id;
+      const sellerId = data.shop._id;
+      await axios
+        .post(`${server}/conversation/create-new-conversation`, {
+          groupTitle,
+          userId,
+          sellerId,
+        })
+        .then((res) => {
+          navigate(`/inbox?${res.data.conversation._id}`);
+        })
+        .catch((error) => {
+          toast.error(error.response.data.message);
+        });
+    } else {
+      toast.error("Please login to create a conversation");
+    }
   };
 
   return (
@@ -101,7 +120,7 @@ const ProductDetails = ({ data }) => {
             <div className="block w-full 800px:flex">
             <div className="w-full 800px:w-[50%]">
                 <img
-                  src={`${backend_url}${data && data.images[select]}`}
+                src={`${data && data.images[select]?.url}`}
                   alt=""
                   className="w-[80%]"
                 />   
@@ -114,7 +133,7 @@ const ProductDetails = ({ data }) => {
                         } cursor-pointer`}
                       >
                         <img
-                          src={`${backend_url}${i}`}
+                           src={`${i?.url}`}
                           alt=""
                           className="h-[200px] overflow-hidden mr-3 mt-3"
                           onClick={() => setSelect(index)}
@@ -189,7 +208,7 @@ const ProductDetails = ({ data }) => {
                 <div className="flex items-center pt-8">
                   <Link to={`/shop/preview/${data?.shop._id}`}>
                     <img
-                      src={`${backend_url}${data.shop.avatar}`}
+                       src={`${data?.shop?.avatar?.url}`}
                       alt=""
                       className="w-[50px] h-[50px] rounded-full mr-2"
                     />
@@ -201,7 +220,7 @@ const ProductDetails = ({ data }) => {
                       </h3>
                     </Link>
                     <h5 className="pb-3 text-[15px]">
-                      {(data.shop.ratings)}Ratings
+                    ({averageRating}/5) Ratings
                       {/* (4/5)Ratings */}
                     </h5>
                   </div>
@@ -282,11 +301,10 @@ const ProductDetailsInfo = ({ data, products,totalReviewsLength,averageRating })
   {active === 2 ? (
         <div className="w-full min-h-[40vh] flex flex-col items-center py-3 overflow-y-scroll">
           {data &&
-            data.reviews.map((item, index) => (
+            data.reviews?.map((item, index) => (
               <div className="w-full flex my-2">
                 <img
-                  //src={`${item.user.avatar?.url}`}
-                  src={`${backend_url}${item.user.avatar}`}
+                 src={`${item.user.avatar?.url}`}
                   alt=""
                   className="w-[50px] h-[50px] rounded-full"
                 />
@@ -301,7 +319,7 @@ const ProductDetailsInfo = ({ data, products,totalReviewsLength,averageRating })
             ))}
 
           <div className="w-full flex justify-center">
-            {data && data.reviews.length === 0 && (
+            {data && data.reviews?.length === 0 && (
               <h5>No Reviews have for this product!</h5>
             )}
           </div>
@@ -314,7 +332,7 @@ const ProductDetailsInfo = ({ data, products,totalReviewsLength,averageRating })
             <Link to={`/shop/preview/${data.shop._id}`}>
               <div className="flex items-center">
                 <img
-                  src={`${backend_url}${data.shop.avatar}`}
+                 src={`${data?.shop?.avatar?.url}`}
                   className="w-[50px] h-[50px] rounded-full"
                   alt=""
                 />

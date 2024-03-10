@@ -9,15 +9,15 @@ import { getAllProductsShop } from "../../reducx/actions/product";
 //import { getAllProductsShop } from "../../redux/actions/product";
 
 const ShopInfo = ({ isOwner }) => {
-    //const { seller } = useSelector((state) => state.seller);
+    const { seller } = useSelector((state) => state.seller);
     const [data,setData] = useState({});
-  // const {products} = useSelector((state) => state.products);
+   const {products} = useSelector((state) => state.products);
    const [isLoading,setIsLoading] = useState(false);
   const {id} = useParams();
   const dispatch = useDispatch();
 
   useEffect(() => {
-    // dispatch(getAllProductsShop(id));
+     dispatch(getAllProductsShop(id));
      setIsLoading(true);
     axios.get(`${server}/shop/get-shop-info/${id}`).then((res) => {
      setData(res.data.shop);
@@ -36,13 +36,13 @@ const ShopInfo = ({ isOwner }) => {
     window.location.reload();
   };
 
-//   const totalReviewsLength =
-//     products &&
-//     products.reduce((acc, product) => acc + product.reviews.length, 0);
+  const totalReviewsLength =
+    products &&
+    products.reduce((acc, product) => acc + product.reviews.length, 0);
 
-//   const totalRatings = products && products.reduce((acc,product) => acc + product.reviews.reduce((sum,review) => sum + review.rating, 0),0);
+  const totalRatings = products && products.reduce((acc,product) => acc + product.reviews.reduce((sum,review) => sum + review.rating, 0),0);
 
-   //const averageRating = totalRatings / totalReviewsLength || 0;
+   const averageRating = totalRatings / totalReviewsLength || 0;
 
   return (
    <>
@@ -54,7 +54,7 @@ const ShopInfo = ({ isOwner }) => {
       <div className="w-full py-5">
         <div className="w-full flex item-center justify-center">
           <img
-            src={`${backend_url}${data.avatar}`}
+            src={`${data.avatar?.url}`}
             alt=""
             className="w-[150px] h-[150px] object-cover rounded-full"
           />
@@ -74,11 +74,11 @@ const ShopInfo = ({ isOwner }) => {
       </div>
       <div className="p-3">
         <h5 className="font-[600]">Total Products</h5>
-        <h4 className="text-[#000000a6]">{"products && products.length"}</h4>
+        <h4 className="text-[#000000a6]">{products && products.length}</h4>
       </div>
       <div className="p-3">
         <h5 className="font-[600]">Shop Ratings</h5>
-        <h4 className="text-[#000000b0]">{"averageRating"}/5</h4>
+        <h4 className="text-[#000000b0]">{averageRating}/5</h4>
       </div>
       <div className="p-3">
         <h5 className="font-[600]">Joined On</h5>

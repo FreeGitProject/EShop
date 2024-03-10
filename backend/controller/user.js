@@ -2,6 +2,7 @@ const express = require("express");
 const path = require("path");
 const User = require("../model/user");
 const router = express.Router();
+const cloudinary = require("cloudinary");
 const { upload } = require("../multer");
 const ErrorHandler = require("../utils/ErrorHandler");
 const catchAsyncErrors = require("../middleware/catchAsyncErrors");
@@ -11,46 +12,44 @@ const sendMail = require("../utils/sendMail");
 const sendToken = require("../utils/jwtToken");
 const { isAuthenticated, isAdmin } = require("../middleware/auth");
 
+// Load environment variables
+if (process.env.NODE_ENV !== "production") {
+  require("dotenv").config({
+    path: path.join(__dirname, "./config/.env")
+  });
+} else {
+  // In production, you might not need to specify the path
+  require("dotenv").config();
+}
 // create user
-router.post("/create-user", upload.single("file"), async (req, res, next) => {
+router.post("/create-user", async (req, res, next) => {
   try {
-    const { name, email, password } = req.body;
+    //console.log(req.body)
+    const { name, email, password, avatar } = req.body;
     const userEmail = await User.findOne({ email });
 
     if (userEmail) {
-      const filename = req.file.filename;
-      const filePath = `uploads/${filename}`;
-      fs.unlink(filePath, (err) => {
-        if (err) {
-          console.log(err);
-          res.status(500).json({ message: "Error deleting file" });
-        }
-        // else{
-        //   res.json({message:"File deleted succesfully"})
-        // }
-      });
       return next(new ErrorHandler("User already exists", 400));
     }
-    const filename = req.file.filename;
-    const fileUrl = path.join(filename);
+
+    const myCloud = await cloudinary.v2.uploader.upload(avatar, {
+      folder: "avatars",
+    });
+
     const user = {
       name: name,
       email: email,
       password: password,
-      avatar: fileUrl,
+      avatar: {
+        public_id: myCloud.public_id,
+        url: myCloud.secure_url,
+      },
     };
-    // const newUser= "hhh";//await User.create(user);
-    // const newUser= await User.create(user);
-    // console.log(user);
-    // console.log(userEmail);
-    //  res.status(201).json({
-    //   success:true,
-    //   newUser,
-    //  });
-    const activationToken = createActivationToken(user);
 
+    const activationToken = createActivationToken(user);
+    const activationUrl = `${process.env.BASE_URL}/activation/${activationToken}`;
     //const activationUrl = `https://eshop-tutorial-pyri.vercel.app/activation/${activationToken}`;
-    const activationUrl = `http://localhost:3000/activation/${activationToken}`;
+
     try {
       await sendMail({
         email: user.email,
@@ -61,7 +60,7 @@ router.post("/create-user", upload.single("file"), async (req, res, next) => {
         success: true,
         message: `please check your email:- ${user.email} to activate your account!`,
       });
-    } catch {
+    } catch (error) {
       return next(new ErrorHandler(error.message, 500));
     }
   } catch (error) {
@@ -230,37 +229,30 @@ router.put(
 router.put(
   "/update-avatar",
   isAuthenticated,
-  upload.single("image"),
   catchAsyncErrors(async (req, res, next) => {
     try {
       let existsUser = await User.findById(req.user.id);
-      const existAvtarPath = `uploads/${existsUser.avatar}`;
-      fs.unlinkSync(existAvtarPath);
-      const fileUrl = path.join(req.file.filename);
-      const user = await User.findByIdAndUpdate(req.user.id, {
-        avatar: fileUrl,
-      });
-      // if (req.body.avatar !== "") {
-      //   const imageId = existsUser.avatar.public_id;
+      if (req.body.avatar !== "") {
+        const imageId = existsUser.avatar.public_id;
 
-      //   await cloudinary.v2.uploader.destroy(imageId);
+        await cloudinary.v2.uploader.destroy(imageId);
 
-      //   const myCloud = await cloudinary.v2.uploader.upload(req.body.avatar, {
-      //     folder: "avatars",
-      //     width: 150,
-      //   });
+        const myCloud = await cloudinary.v2.uploader.upload(req.body.avatar, {
+          folder: "avatars",
+          width: 150,
+        });
 
-      //   existsUser.avatar = {
-      //     public_id: myCloud.public_id, 
-      //     url: myCloud.secure_url,
-      //   };
-      // }
+        existsUser.avatar = {
+          public_id: myCloud.public_id,
+          url: myCloud.secure_url,
+        };
+      }
 
-      // await existsUser.save();
+      await existsUser.save();
 
       res.status(200).json({
         success: true,
-        user,
+        user: existsUser,
       });
     } catch (error) {
       return next(new ErrorHandler(error.message, 500));
@@ -360,6 +352,73 @@ router.put(
       res.status(200).json({
         success: true,
         message: "Password updated successfully!",
+      });
+    } catch (error) {
+      return next(new ErrorHandler(error.message, 500));
+    }
+  })
+);
+
+// find user infoormation with the userId
+router.get(
+  "/user-info/:id",
+  catchAsyncErrors(async (req, res, next) => {
+    try {
+      const user = await User.findById(req.params.id);
+
+      res.status(201).json({
+        success: true,
+        user,
+      });
+    } catch (error) {
+      return next(new ErrorHandler(error.message, 500));
+    }
+  })
+);
+// all users --- for admin
+router.get(
+  "/admin-all-users",
+  isAuthenticated,
+  isAdmin("Admin"),
+  catchAsyncErrors(async (req, res, next) => {
+    try {
+      const users = await User.find().sort({
+        createdAt: -1,
+      });
+      res.status(201).json({
+        success: true,
+        users,
+      });
+    } catch (error) {
+      return next(new ErrorHandler(error.message, 500));
+    }
+  })
+);
+
+// delete users --- admin
+router.delete(
+  "/delete-user/:id",
+  isAuthenticated,
+  isAdmin("Admin"),
+  catchAsyncErrors(async (req, res, next) => {
+    try {
+      const user = await User.findById(req.params.id);
+
+      if (!user) {
+        return next(
+          new ErrorHandler("User is not available with this id", 400)
+        );
+      }
+
+      // const imageId = user.avatar.public_id;
+
+      // await cloudinary.v2.uploader.destroy(imageId);
+
+      await User.findByIdAndDelete(req.params.id);
+
+      res.status(201).json({
+        success: true,
+        message: "User deleted successfully!",
       });
     } catch (error) {
       return next(new ErrorHandler(error.message, 500));

@@ -1,36 +1,53 @@
 const express = require("express");
-const { isSeller ,isAuthenticated} = require("../middleware/auth");
+const { isSeller ,isAuthenticated,isAdmin} = require("../middleware/auth");
 const router = express.Router();
 const Product = require("../model/product");
 const Shop = require("../model/shop");
 const { upload } = require("../multer");
+const cloudinary = require("cloudinary");
 const catchAsyncErrors = require("../middleware/catchAsyncErrors");
 const ErrorHandler = require("../utils/ErrorHandler");
 const fs=require("fs");
 const order = require("../model/order");
 
 
-//Create product
+// create product
 router.post(
-  "/Create-product",
-  upload.array("images"),
+  "/create-product",
   catchAsyncErrors(async (req, res, next) => {
     try {
-      console.log("Create-product" + req.body.shopId);
       const shopId = req.body.shopId;
       const shop = await Shop.findById(shopId);
-      console.log("shop" + shop);
       if (!shop) {
         return next(new ErrorHandler("Shop Id is invalid!", 400));
       } else {
-        const files = req.files;
-        const imageUrls = files.map((file) => `${file.filename}`);
+        let images = [];
 
+        if (typeof req.body.images === "string") {
+          images.push(req.body.images);
+        } else {
+          images = req.body.images;
+        }
+      
+        const imagesLinks = [];
+      
+        for (let i = 0; i < images.length; i++) {
+          const result = await cloudinary.v2.uploader.upload(images[i], {
+            folder: "products",
+          });
+      
+          imagesLinks.push({
+            public_id: result.public_id,
+            url: result.secure_url,
+          });
+        }
+      
         const productData = req.body;
-        productData.images = imageUrls;
+        productData.images = imagesLinks;
         productData.shop = shop;
 
         const product = await Product.create(productData);
+
         res.status(201).json({
           success: true,
           product,
@@ -163,6 +180,26 @@ console.log("review");
       });
     } catch (error) {
       return next(new ErrorHandler(error, 400));
+    }
+  })
+);
+
+// all products --- for admin
+router.get(
+  "/admin-all-products",
+  isAuthenticated,
+  isAdmin("Admin"),
+  catchAsyncErrors(async (req, res, next) => {
+    try {
+      const products = await Product.find().sort({
+        createdAt: -1,
+      });
+      res.status(201).json({
+        success: true,
+        products,
+      });
+    } catch (error) {
+      return next(new ErrorHandler(error.message, 500));
     }
   })
 );
