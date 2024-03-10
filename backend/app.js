@@ -16,7 +16,7 @@ if (process.env.NODE_ENV !== "production") {
 }
 // Use process.env to access environment variables
 //const localUrl = process.env.LOCAL_URL;
-const baseUrl = process.env.BASE_URL;
+//const baseUrl = process.env.BASE_URL;
 
 app.use(express.json());
 app.use(cookieParser());
@@ -26,7 +26,7 @@ app.use(cookieParser());
 //   credentials:true,
 // }));
 app.use(cors({
-  origin:baseUrl,
+  origin:"https://e-shop-njoh.vercel.app/",
   credentials:true,
 }));
 
