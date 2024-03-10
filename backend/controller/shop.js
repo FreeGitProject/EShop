@@ -12,6 +12,16 @@ const sendMail = require("../utils/sendMail");
 const sendShopToken = require("../utils/shopToken");
 const {isAuthenticated, isSeller, isAdmin } = require("../middleware/auth");
 
+// Load environment variables
+if (process.env.NODE_ENV !== "production") {
+  require("dotenv").config({
+    path: path.join(__dirname, "./config/.env")
+  });
+} else {
+  // In production, you might not need to specify the path
+  require("dotenv").config();
+}
+
 // create shop
 router.post("/create-shop", catchAsyncErrors(async (req, res, next) => {
   try {
@@ -41,7 +51,7 @@ router.post("/create-shop", catchAsyncErrors(async (req, res, next) => {
 
     const activationToken = createActivationToken(seller);
 
-    const activationUrl = `http://localhost:3000/shop/activation/${activationToken}`;
+    const activationUrl = `${process.env.BASE_URL}/shop/activation/${activationToken}`;
     //const activationUrl = `https://e-shop-ugyz.vercel.app/shop/activation/${activationToken}`;
 
     //const activationUrl = `https://eshop-tutorial-pyri.vercel.app/seller/activation/${activationToken}`;

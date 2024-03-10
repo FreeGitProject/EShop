@@ -12,6 +12,15 @@ const sendMail = require("../utils/sendMail");
 const sendToken = require("../utils/jwtToken");
 const { isAuthenticated, isAdmin } = require("../middleware/auth");
 
+// Load environment variables
+if (process.env.NODE_ENV !== "production") {
+  require("dotenv").config({
+    path: path.join(__dirname, "./config/.env")
+  });
+} else {
+  // In production, you might not need to specify the path
+  require("dotenv").config();
+}
 // create user
 router.post("/create-user", async (req, res, next) => {
   try {
@@ -38,7 +47,7 @@ router.post("/create-user", async (req, res, next) => {
     };
 
     const activationToken = createActivationToken(user);
-    const activationUrl = `http://localhost:3000/activation/${activationToken}`;
+    const activationUrl = `${process.env.BASE_URL}/activation/${activationToken}`;
     //const activationUrl = `https://eshop-tutorial-pyri.vercel.app/activation/${activationToken}`;
 
     try {

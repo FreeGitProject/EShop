@@ -8,13 +8,28 @@ const path = require("path");
 // app.route('/').get((req,res)=>{
 //   res.json({msg:"Listening on port 8000"});
 // })
+// Load environment variables
+if (process.env.NODE_ENV !== "production") {
+  require("dotenv").config({
+    path: "config/.env",
+  });
+}
+// Use process.env to access environment variables
+//const localUrl = process.env.LOCAL_URL;
+const baseUrl = process.env.BASE_URL;
 
 app.use(express.json());
 app.use(cookieParser());
+// Use cors with dynamic origin
+// app.use(cors({
+//   origin:"http://localhost:3000",
+//   credentials:true,
+// }));
 app.use(cors({
-  origin:"http://localhost:3000",
+  origin:baseUrl,
   credentials:true,
 }));
+
 // app.use(cors({
 //   origin:'https://e-shop-ugyz.vercel.app',
 //   credentials:true,
@@ -27,14 +42,6 @@ app.use("/",express.static(path.join(__dirname,"./uploads")));
 
 app.use(bodyParser.urlencoded({ extended: true, limit: "50mb" }));
 
-
-
-// config
-if (process.env.NODE_ENV !== "PRODUCTION") {
-  require("dotenv").config({
-    path: "config/.env",
-  });
-}
 
 //import routes
 const user= require("./controller/user");
