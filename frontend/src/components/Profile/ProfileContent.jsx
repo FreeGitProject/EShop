@@ -49,49 +49,30 @@ const ProfileContent = ({ active }) => {
     dispatch(updateUserInformation(name, email, phoneNumber, password));
   };
   const handleImage = async (e) => {
-    // const reader = new FileReader();
-    const file = e.target.files[0];
-    setAvatar(file);
-    const formData = new FormData();
-    formData.append("image", e.target.files[0]);
-    axios
-      .put(`${server}/user/update-avatar`, formData, {
-        headers: {
-          "Content-Type": "multipart/form-data",
-        },
-        withCredentials: true,
-      })
-      .then((response) => {
-        //window.location.reload();
-         dispatch(loadUser());
-         toast.success("avatar updated successfully!");
-      })
-      .catch((error) => {
-        toast.error(error);
-      });
+    const reader = new FileReader();
 
-    // reader.onload = () => {
-    //   if (reader.readyState === 2) {
-    //     setAvatar(reader.result);
-    //     axios
-    //       .put(
-    //         `${server}/user/update-avatar`,
-    //         { avatar: reader.result },
-    //         {
-    //           withCredentials: true,
-    //         }
-    //       )
-    //       .then((response) => {
-    //         dispatch(loadUser());
-    //         toast.success("avatar updated successfully!");
-    //       })
-    //       .catch((error) => {
-    //         toast.error(error);
-    //       });
-    //   }
-    // };
+    reader.onload = () => {
+      if (reader.readyState === 2) {
+        setAvatar(reader.result);
+        axios
+          .put(
+            `${server}/user/update-avatar`,
+            { avatar: reader.result },
+            {
+              withCredentials: true,
+            }
+          )
+          .then((response) => {
+            dispatch(loadUser());
+            toast.success("avatar updated successfully!");
+          })
+          .catch((error) => {
+            toast.error(error);
+          });
+      }
+    };
 
-    // reader.readAsDataURL(e.target.files[0]);
+    reader.readAsDataURL(e.target.files[0]);
   };
   return (
     <div className="w-full">
@@ -101,7 +82,7 @@ const ProfileContent = ({ active }) => {
           <div className="flex justify-center w-full">
             <div className="relative">
               <img
-                src={`${backend_url}${user?.avatar}`}
+                src={`${user?.avatar?.url}`}
                 className="w-[150px] h-[150px] rounded-full object-cover border-[3px] border-[#3ad132]"
                 alt=""
               />

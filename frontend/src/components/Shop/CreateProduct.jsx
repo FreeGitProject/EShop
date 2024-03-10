@@ -22,14 +22,10 @@ const CreateProduct = () => {
   const [stock, setStock] = useState();
 
   useEffect(() => {
-    console.log("useEffect"+error+success)
     if (error) {
-        console.log("errer")
       toast.error(error);
-      console.log("errer")
     }
     if (success) {
-        console.log("errer");
       toast.success("Product created successfully!");
       navigate("/dashboard");
       window.location.reload();
@@ -37,21 +33,20 @@ const CreateProduct = () => {
   }, [dispatch, error, success]);
 
   const handleImageChange = (e) => {
-    e.preventDefault();
     const files = Array.from(e.target.files);
-    setImages((old) => [...old,...files]);
-    // setImages([]);
 
-    // files.forEach((file) => { 
-    //   const reader = new FileReader();
+    setImages([]);
 
-    //   reader.onload = () => {
-    //     if (reader.readyState === 2) {
-    //       setImages((old) => [...old, reader.result]);
-    //     }
-    //   };
-    //   reader.readAsDataURL(file);
-    // });
+    files.forEach((file) => {
+      const reader = new FileReader();
+
+      reader.onload = () => {
+        if (reader.readyState === 2) {
+          setImages((old) => [...old, reader.result]);
+        }
+      };
+      reader.readAsDataURL(file);
+    });
   };
 
   const handleSubmit = (e) => {
@@ -70,21 +65,19 @@ const CreateProduct = () => {
     newForm.append("discountPrice", discountPrice);
     newForm.append("stock", stock);
     newForm.append("shopId", seller._id);
-    console.log(newForm);
-    dispatch(createProduct(newForm));
-    // dispatch(
-    //   createProduct({
-    //     name,
-    //     description,
-    //     category,
-    //     tags,
-    //     originalPrice,
-    //     discountPrice,
-    //     stock,
-    //     shopId: seller._id,
-    //     images,
-    //   })
-    // );
+    dispatch(
+      createProduct({
+        name,
+        description,
+        category,
+        tags,
+        originalPrice,
+        discountPrice,
+        stock,
+        shopId: seller._id,
+        images,
+      })
+    );
   };
 
   return (
@@ -214,7 +207,7 @@ const CreateProduct = () => {
             {images &&
               images.map((i) => (
                 <img
-                  src={URL.createObjectURL(i)}
+                  src={i}
                   key={i}
                   alt=""
                   className="h-[120px] w-[120px] object-cover m-2"

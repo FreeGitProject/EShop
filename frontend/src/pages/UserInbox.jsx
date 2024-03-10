@@ -148,66 +148,25 @@ const UserInbox = () => {
   };
 
   const handleImageUpload = async (e) => {
-    const file = e.target.files[0];
-    setImages(file);
-    imageSendingHandler(file);
-  //   const reader = new FileReader();
+    const reader = new FileReader();
 
-  //   reader.onload = () => {
-  //     if (reader.readyState === 2) {
-  //       setImages(reader.result);
-  //       imageSendingHandler(reader.result);
-  //     }
-  //   };
+    reader.onload = () => {
+      if (reader.readyState === 2) {
+        setImages(reader.result);
+        imageSendingHandler(reader.result);
+      }
+    };
 
-  //   reader.readAsDataURL(e.target.files[0]);
-  // };
-
-  // const imageSendingHandler = async (e) => {
-
-  //   const receiverId = currentChat.members.find(
-  //     (member) => member !== user._id
-  //   );
-
-  //   socketId.emit("sendMessage", {
-  //     senderId: user._id,
-  //     receiverId,
-  //     images: e,
-  //   });
-
-  //   try {
-  //     await axios
-  //       .post(
-  //         `${server}/message/create-new-message`,
-  //         {
-  //           images: e,
-  //           sender: user._id,
-  //           text: newMessage,
-  //           conversationId: currentChat._id,
-  //         }
-  //       )
-  //       .then((res) => {
-  //         setImages();
-  //         setMessages([...messages, res.data.message]);
-  //         updateLastMessageForImage();
-  //       });
-  //   } catch (error) {
-  //     console.log(error);
-  //   }
+    reader.readAsDataURL(e.target.files[0]);
   };
-  const imageSendingHandler = async (e) => {
-    const formData = new FormData();
 
-    formData.append('images', e);
-    formData.append('sender', user._id);
-    formData.append('text', newMessage);
-    formData.append('conversationId', currentChat._id);
+  const imageSendingHandler = async (e) => {
 
     const receiverId = currentChat.members.find(
-      (member) => member !== user._id,
+      (member) => member !== user._id
     );
 
-    socketId.emit('sendMessage', {
+    socketId.emit("sendMessage", {
       senderId: user._id,
       receiverId,
       images: e,
@@ -215,11 +174,15 @@ const UserInbox = () => {
 
     try {
       await axios
-        .post(`${server}/message/create-new-message`, formData, {
-          headers: {
-            'Content-Type': 'multipart/form-data',
-          },
-        })
+        .post(
+          `${server}/message/create-new-message`,
+          {
+            images: e,
+            sender: user._id,
+            text: newMessage,
+            conversationId: currentChat._id,
+          }
+        )
         .then((res) => {
           setImages();
           setMessages([...messages, res.data.message]);
@@ -339,8 +302,7 @@ const MessageList = ({
     >
       <div className="relative">
         <img
-          src={`${backend_url}${user?.avatar}`}
-         // src={`${user?.avatar?.url}`}
+          src={`${user?.avatar?.url}`}
           alt=""
           className="w-[50px] h-[50px] rounded-full"
         />
@@ -381,8 +343,7 @@ const SellerInbox = ({
       <div className="w-full flex p-3 items-center justify-between bg-slate-200">
         <div className="flex">
           <img
-            src={`${backend_url}${userData?.avatar}`}
-            //src={`${userData?.avatar?.url}`}
+            src={`${userData?.avatar?.url}`}
             alt=""
             className="w-[60px] h-[60px] rounded-full"
           />
@@ -410,16 +371,14 @@ const SellerInbox = ({
             >
               {item.sender !== sellerId && (
                 <img
-                src={`${backend_url}${userData?.avatar}`}
-                //  src={`${userData?.avatar?.url}`}
+                  src={`${userData?.avatar?.url}`}
                   className="w-[40px] h-[40px] rounded-full mr-3"
                   alt=""
                 />
               )}
               {item.images && (
                 <img
-                src={`${backend_url}${item.images}`}
-                 // src={`${item.images?.url}`}
+                  src={`${item.images?.url}`}
                   className="w-[300px] h-[300px] object-cover rounded-[10px] ml-2 mb-2"
                 />
               )}

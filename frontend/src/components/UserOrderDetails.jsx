@@ -89,8 +89,7 @@ console.log("userOderDetail",id);
           return(
           <div className="w-full flex items-start mb-5">
             <img
-            //   src={`${item.images[0]?.url}`}
-            src={`${backend_url}${item.images[0]}`}
+               src={`${item.images[0]?.url}`}
               alt=""
               className="w-[80x] h-[80px]"
             />
@@ -129,8 +128,7 @@ console.log("userOderDetail",id);
             <br />
             <div className="w-full flex">
               <img
-               // src={`${selectedItem?.images[0]?.url}`}
-               src={`${backend_url}${selectedItem.images[0]}`}
+                src={`${selectedItem?.images[0]?.url}`}
                 alt=""
                 className="w-[80px] h-[80px]"
               />

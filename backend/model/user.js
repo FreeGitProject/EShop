@@ -47,15 +47,15 @@ const userSchema = new mongoose.Schema({
     default: "user",
   },
   avatar:{
-    type: String,
-    // public_id: {
-    //   type: String,
-    //   required: true,
-    // },
-    // url: {
-    //   type: String,
-    //   required: true,
-    // },
+   // type: String,
+    public_id: {
+      type: String,
+      required: true,
+    },
+    url: {
+      type: String,
+      required: true,
+    },
  },
  createdAt:{
   type: Date,

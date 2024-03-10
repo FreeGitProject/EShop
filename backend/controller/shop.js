@@ -2,6 +2,7 @@ const express = require("express");
 const path = require("path");
 const Shop = require("../model/shop");
 const { upload } = require("../multer");
+const cloudinary = require("cloudinary");
 const router = express.Router();
 const ErrorHandler = require("../utils/ErrorHandler");
 const catchAsyncErrors = require("../middleware/catchAsyncErrors");
@@ -12,36 +13,39 @@ const sendShopToken = require("../utils/shopToken");
 const {isAuthenticated, isSeller, isAdmin } = require("../middleware/auth");
 
 // create shop
-router.post("/create-shop", upload.single("file"), async (req, res, next) => {
+router.post("/create-shop", catchAsyncErrors(async (req, res, next) => {
   try {
     const { email } = req.body;
     const sellerEmail = await Shop.findOne({ email });
     if (sellerEmail) {
-      const filename = req.file.filename;
-      const filePath = `uploads/${filename}`;
-      fs.unlink(filePath, (err) => {
-        if (err) {
-          console.log(err);
-          res.status(500).json({ message: "Error deleting file" });
-        }
-      });
       return next(new ErrorHandler("User already exists", 400));
     }
-    const filename = req.file.filename;
-    const fileUrl = path.join(filename);
+
+    const myCloud = await cloudinary.v2.uploader.upload(req.body.avatar, {
+      folder: "avatars",
+    });
+
+
     const seller = {
       name: req.body.name,
       email: email,
       password: req.body.password,
-      avatar: fileUrl,
+      avatar: {
+        public_id: myCloud.public_id,
+        url: myCloud.secure_url,
+      },
       address: req.body.address,
       phoneNumber: req.body.phoneNumber,
       zipCode: req.body.zipCode,
     };
-console.log(seller);
+
     const activationToken = createActivationToken(seller);
+
     const activationUrl = `http://localhost:3000/shop/activation/${activationToken}`;
     //const activationUrl = `https://e-shop-ugyz.vercel.app/shop/activation/${activationToken}`;
+
+    //const activationUrl = `https://eshop-tutorial-pyri.vercel.app/seller/activation/${activationToken}`;
+
     try {
       await sendMail({
         email: seller.email,
@@ -52,13 +56,13 @@ console.log(seller);
         success: true,
         message: `please check your email:- ${seller.email} to activate your shop!`,
       });
-    } catch {
+    } catch (error) {
       return next(new ErrorHandler(error.message, 500));
     }
   } catch (error) {
     return next(new ErrorHandler(error.message, 400));
   }
-});
+}));
 
 // create shop activation token
 const createActivationToken = (seller) => {
@@ -67,44 +71,46 @@ const createActivationToken = (seller) => {
     });
   };
 
-  // activate shop
+ // activate user
 router.post(
-    '/activation',
-    catchAsyncErrors(async (req, res, next) => {
-      try {
-        const { activation_token } = req.body;
-  
-        const newSeller = jwt.verify(
-          activation_token,
-          process.env.ACTIVATION_SECRET,
-        );
-  
-        if (!newSeller) {
-          return next(new ErrorHandler('Invalid token', 400));
-        }
-        const { name, email, password, avatar,address,phoneNumber,zipCode } = newSeller;
-  
-        let shop = await Shop.findOne({ email });
-  
-        if (!shop) {
-          return next(new ErrorHandler('Shop already exists', 400));
-        }
-        shop = await Shop.create({
-          name,
-          email,
-          avatar,
-          password,zipCode,address,phoneNumber,
-        });
-  
-        res.status(201).json({
-          success: true,
-          token: shop.getJwtToken()
-        });
-      } catch (error) {
-        return next(new ErrorHandler(error.message, 500));
+  "/activation",
+  catchAsyncErrors(async (req, res, next) => {
+    try {
+      const { activation_token } = req.body;
+
+      const newSeller = jwt.verify(
+        activation_token,
+        process.env.ACTIVATION_SECRET
+      );
+
+      if (!newSeller) {
+        return next(new ErrorHandler("Invalid token", 400));
       }
-    }),
-  );
+      const { name, email, password, avatar, zipCode, address, phoneNumber } =
+        newSeller;
+
+      let seller = await Shop.findOne({ email });
+
+      if (seller) {
+        return next(new ErrorHandler("Shop already exists", 400));
+      }
+
+      seller = await Shop.create({
+        name,
+        email,
+        avatar,
+        password,
+        zipCode,
+        address,
+        phoneNumber,
+      });
+
+      sendShopToken(seller, 201, res);
+    } catch (error) {
+      return next(new ErrorHandler(error.message, 500));
+    }
+  })
+);
 
   
 // login shop
@@ -200,37 +206,30 @@ router.get(
 router.put(
   "/update-shop-avatar",
   isSeller,
-  upload.single("image"),
   catchAsyncErrors(async (req, res, next) => {
     try {
       let existsSeller = await Shop.findById(req.seller._id);
 
-      const existAvtarPath = `uploads/${existsSeller.avatar}`;
-      fs.unlinkSync(existAvtarPath);
-      const fileUrl = path.join(req.file.filename);
-      const seller = await Shop.findByIdAndUpdate(req.seller._id, {
-        avatar: fileUrl,
-      });
-       // const imageId = existsSeller.avatar.public_id;
+        const imageId = existsSeller.avatar.public_id;
 
-        //await cloudinary.v2.uploader.destroy(imageId);
+        await cloudinary.v2.uploader.destroy(imageId);
 
-        // const myCloud = await cloudinary.v2.uploader.upload(req.body.avatar, {
-        //   folder: "avatars",
-        //   width: 150,
-        // });
+        const myCloud = await cloudinary.v2.uploader.upload(req.body.avatar, {
+          folder: "avatars",
+          width: 150,
+        });
 
-        // existsSeller.avatar = {
-        //   public_id: myCloud.public_id,
-        //   url: myCloud.secure_url,
-        // };
+        existsSeller.avatar = {
+          public_id: myCloud.public_id,
+          url: myCloud.secure_url,
+        };
 
   
-      //await existsSeller.save();
+      await existsSeller.save();
 
       res.status(200).json({
         success: true,
-        seller,
+        seller:existsSeller,
       });
     } catch (error) {
       return next(new ErrorHandler(error.message, 500));

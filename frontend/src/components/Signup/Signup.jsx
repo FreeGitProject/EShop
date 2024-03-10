@@ -13,61 +13,74 @@ const Signup = () => {
   const [password, setPassword] = useState("");
   const [visible, setVisible] = useState(false);
   const [avatar, setAvatar] = useState(null);
-  const navigate = useNavigate();
 
-  const handleFileInputChange = async (e) => {
-    const file = e.target.files[0];
-    setAvatar(file);
-    //// if (file) {
-    //   const reader = new FileReader();
-      
-    //   reader.onloadend = () => {
-    //     setAvatar(reader.result); // set the data URL as the avatar
-    //   };
-      
-    //   reader.readAsDataURL(file); // read the file as a data URL
-    //// }
+
+  const handleFileInputChange = (e) => {
+    const reader = new FileReader();
+
+    reader.onload = () => {
+      if (reader.readyState === 2) {
+        setAvatar(reader.result);
+      }
+    };
+
+    reader.readAsDataURL(e.target.files[0]);
   };
-  
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    const config={headers:{"Content-Type":"multipart/form-data"}};
-    const newForm= new FormData();
-    newForm.append("file",avatar);
-    newForm.append("name",name);
-    newForm.append("email",email);
-    newForm.append("password",password);
-    //console.log(newForm);
-    axios.post(`${server}/user/create-user`, newForm,config).then((res) => {
-      //  if(res.data.success=== true)
-      //  {
+
+    axios
+      .post(`${server}/user/create-user`, { name, email, password, avatar })
+      .then((res) => {
         toast.success(res.data.message);
-        setName('');
-        setEmail('');
-        setPassword('');
+        setName("");
+        setEmail("");
+        setPassword("");
         setAvatar();
       })
       .catch((error) => {
-       console.log(error.response.data.message)
-       toast.error(error.response.data.message);
+        toast.error(error.response.data.message);
       });
-    // fetch(`${server}/user/create-user`, {
-    //   method: 'POST',
-    //   headers: {
-    //     'Content-Type': 'multipart/form-data',
-    //     // Add any other headers if needed
-    //   }//,
-    //   //body: JSON.stringify(newForm),
-    // })
-    //   .then(response => response.json())
-    //   .then(data => {
-    //     console.log(data);
-    //   })
-    //   .catch(error => {
-    //     console.error('Error:', error);
-    //   });
-    //
   };
+  // const handleSubmit = (e) => {
+  //   e.preventDefault();
+  //   const config={headers:{"Content-Type":"multipart/form-data"}};
+  //   const newForm= new FormData();
+  //   newForm.append("avatar",avatar);
+  //   newForm.append("name",name);
+  //   newForm.append("email",email);
+  //   newForm.append("password",password);
+  //   //console.log(newForm);
+  //   axios.post(`${server}/user/create-user`, newForm,config).then((res) => {
+  //     //  if(res.data.success=== true)
+  //     //  {
+  //       toast.success(res.data.message);
+  //       setName('');
+  //       setEmail('');
+  //       setPassword('');
+  //       setAvatar();
+  //     })
+  //     .catch((error) => {
+  //      console.log(error.response.data.message)
+  //      toast.error(error.response.data.message);
+  //     });
+  //   // fetch(`${server}/user/create-user`, {
+  //   //   method: 'POST',
+  //   //   headers: {
+  //   //     'Content-Type': 'multipart/form-data',
+  //   //     // Add any other headers if needed
+  //   //   }//,
+  //   //   //body: JSON.stringify(newForm),
+  //   // })
+  //   //   .then(response => response.json())
+  //   //   .then(data => {
+  //   //     console.log(data);
+  //   //   })
+  //   //   .catch(error => {
+  //   //     console.error('Error:', error);
+  //   //   });
+  //   //
+  // };
 
   return (
     <div className="min-h-screen bg-gray-50 flex flex-col justify-center py-12 sm:px-6 lg:px-8">
@@ -161,7 +174,7 @@ const Signup = () => {
                 <span className="inline-block h-8 w-8 rounded-full overflow-hidden">
                   {avatar ? (
                     <img
-                      src={URL.createObjectURL(avatar)}
+                      src={avatar}
                       alt="avatar"
                       className="h-full w-full object-cover rounded-full"
                     />
