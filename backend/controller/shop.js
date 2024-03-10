@@ -17,10 +17,11 @@ if (process.env.NODE_ENV !== "production") {
   require("dotenv").config({
     path: path.join(__dirname, "./config/.env")
   });
-} else {
-  // In production, you might not need to specify the path
-  require("dotenv").config();
-}
+} 
+// else {
+//   // In production, you might not need to specify the path
+//   require("dotenv").config();
+// }
 
 // create shop
 router.post("/create-shop", catchAsyncErrors(async (req, res, next) => {
