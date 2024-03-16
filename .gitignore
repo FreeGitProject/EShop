@@ -2,6 +2,7 @@
 backend/config/.env
 /frontend/node_modules
 /node_modules
+/frontend/.env
 backend/node_modules
 socket/node_modules
 #backend/uploads
