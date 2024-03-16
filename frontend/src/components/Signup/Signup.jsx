@@ -13,6 +13,7 @@ const Signup = () => {
   const [password, setPassword] = useState("");
   const [visible, setVisible] = useState(false);
   const [avatar, setAvatar] = useState(null);
+  const [showFileInput, setShowFileInput] = useState(false);
 
 
   const handleFileInputChange = (e) => {
@@ -40,6 +41,7 @@ const Signup = () => {
       })
       .catch((error) => {
         toast.error(error.response.data.message);
+        console.log(error.response.data.message);
       });
   };
   // const handleSubmit = (e) => {
@@ -86,7 +88,7 @@ const Signup = () => {
     <div className="min-h-screen bg-gray-50 flex flex-col justify-center py-12 sm:px-6 lg:px-8">
       <div className="sm:mx-auto sm:w-full sm:max-w-md">
         <h2 className="mt-6 text-center text-3xl font-extrabold text-gray-900">
-          Register as a new user
+        Create Account
         </h2>
       </div>
       <div className="mt-8 sm:mx-auto sm:w-full sm:max-w-md">
@@ -165,39 +167,41 @@ const Signup = () => {
               </div>
             </div>
 
-            <div>
-              <label
-                htmlFor="avatar"
-                className="block text-sm font-medium text-gray-700"
-              ></label>
-              <div className="mt-2 flex items-center">
-                <span className="inline-block h-8 w-8 rounded-full overflow-hidden">
-                  {avatar ? (
-                    <img
-                      src={avatar}
-                      alt="avatar"
-                      className="h-full w-full object-cover rounded-full"
-                    />
-                  ) : (
-                    <RxAvatar className="h-8 w-8" />
-                  )}
-                </span>
+            {showFileInput && (
+              <div>
                 <label
-                  htmlFor="file-input"
-                  className="ml-5 flex items-center justify-center px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50"
-                >
-                  <span>Upload a file</span>
-                  <input
-                    type="file"
-                    name="avatar"
-                    id="file-input"
-                    accept=".jpg,.jpeg,.png"
-                    onChange={handleFileInputChange}
-                    className="sr-only"
-                  />
-                </label>
+                  htmlFor="avatar"
+                  className="block text-sm font-medium text-gray-700"
+                ></label>
+                <div className="mt-2 flex items-center">
+                  <span className="inline-block h-8 w-8 rounded-full overflow-hidden">
+                    {avatar ? (
+                      <img
+                        src={avatar}
+                        alt="avatar"
+                        className="h-full w-full object-cover rounded-full"
+                      />
+                    ) : (
+                      <RxAvatar className="h-8 w-8" />
+                    )}
+                  </span>
+                  <label
+                    htmlFor="file-input"
+                    className="ml-5 flex items-center justify-center px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50"
+                  >
+                    <span>Upload a file</span>
+                    <input
+                      type="file"
+                      name="avatar"
+                      id="file-input"
+                      accept=".jpg,.jpeg,.png"
+                      onChange={handleFileInputChange}
+                      className="sr-only"
+                    />
+                  </label>
+                </div>
               </div>
-            </div>
+            )}
 
             <div>
               <button
@@ -205,6 +209,15 @@ const Signup = () => {
                 className="group relative w-full h-[40px] flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700"
               >
                 Submit
+              </button>
+            </div>
+            <div className="w-full flex justify-center">
+              <button
+                type="button"
+                className="text-blue-600 underline hover:text-blue-800"
+                onClick={() => setShowFileInput(!showFileInput)}
+              >
+                {showFileInput ? "Remove profile image upload" : "Add profile image(Optional)"}
               </button>
             </div>
             <div className={`${styles.noramlFlex} w-full`}>

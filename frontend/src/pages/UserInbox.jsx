@@ -1,16 +1,16 @@
+import axios from "axios";
 import React, { useEffect, useRef, useState } from "react";
+import { backend_url, server,soketEndPoint } from "../server";
 import Header from "../components/Layout/Header";
 import { useSelector } from "react-redux";
 import socketIO from "socket.io-client";
 import { format } from "timeago.js";
-import { backend_url, server } from "../server";
-import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import { AiOutlineArrowRight, AiOutlineSend } from "react-icons/ai";
 import { TfiGallery } from "react-icons/tfi";
 import styles from "../styles/styles";
-const ENDPOINT = "http://localhost:4000/";
-const socketId = socketIO(ENDPOINT, { transports: ["websocket"] });
+//const ENDPOINT = "http://localhost:4000/";
+const socketId = socketIO(soketEndPoint, { transports: ["websocket"] });
 
 const UserInbox = () => {
   const { user,loading } = useSelector((state) => state.user);
@@ -317,7 +317,7 @@ const MessageList = ({
         <p className="text-[16px] text-[#000c]">
           {!loading && data?.lastMessageId !== userData?._id
             ? "You:"
-            : userData?.name.split(" ")[0] + ": "}{" "}
+            : userData?.name?.split(" ")[0] + ": "}{" "}
           {data?.lastMessage}
         </p>
       </div>
