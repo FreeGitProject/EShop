@@ -30,7 +30,7 @@ const ProductDetails = ({ data }) => {
   const navigate = useNavigate();
 
   const dispatch = useDispatch();
-  console.log("ProductDetails",products, data);
+  console.log("ProductDetails", products, data);
   useEffect(() => {
     dispatch(getAllProductsShop(data && data?.shop._id));
     if (wishlist && wishlist.find((i) => i._id === data?._id)) {
@@ -74,7 +74,7 @@ const ProductDetails = ({ data }) => {
       }
     }
   };
- const totalReviewsLength =
+  const totalReviewsLength =
     products &&
     products.reduce((acc, product) => acc + product.reviews.length, 0);
 
@@ -86,7 +86,7 @@ const ProductDetails = ({ data }) => {
       0
     );
 
-  const avg =  totalRatings / totalReviewsLength || 0;
+  const avg = totalRatings / totalReviewsLength || 0;
 
   const averageRating = avg.toFixed(2);
 
@@ -117,36 +117,38 @@ const ProductDetails = ({ data }) => {
       {data ? (
         <div className={`${styles.section} w-[90%] 800px:w-[80%]`}>
           <div className="w-full py-5">
-            <div className="block w-full 800px:flex">
-            <div className="w-full 800px:w-[50%]">
-                <img
-                src={`${data && data.images[select]?.url}`}
-                  alt=""
-                  className="w-[80%]"
-                />   
-                <div className="w-full flex">
+            <div className="block w-full 800px:flex justify-between">
+              <div className="w-full 800px:w-[50%]">
+                <div className="w-[90%] h-[600px] border border-qgray-border flex justify-center items-center overflow-hidden relative mb-3">
+                  <img
+                    src={`${data && data.images[select]?.url}`}
+                    alt=""
+                    class="object-contain"
+                  />
+                </div>
+
+                <div className="flex gap-2 flex-wrap">
                   {data &&
                     data.images.map((i, index) => (
-                      <div key={index}
+                      <div
+                        key={index}
                         className={`${
-                          select === 0 ? 'border' : 'null'
-                        } cursor-pointer`}
+                          select === index ? "border" : "null"
+                        } w-[110px] h-[110px] p-[15px] border border-qgray-border cursor-pointer`}
                       >
                         <img
-                           src={`${i?.url}`}
+                          src={`${i?.url}`}
                           alt=""
-                          className="h-[200px] overflow-hidden mr-3 mt-3"
+                          class={`w-full h-full object-contain ${
+                            select === index ? "" : "opacity-50"
+                          }`}
                           onClick={() => setSelect(index)}
                         />
                       </div>
                     ))}
-                  <div
-                    className={`${
-                      select === 1 ? 'border' : 'null'
-                    } cursor-pointer`}
-                  ></div>
                 </div>
               </div>
+
               <div className="w-full 800px:w-[50%] pt-5">
                 <h1 className={`${styles.productTitle}`}>{data.name}</h1>
                 <p>{data.description}</p>
@@ -182,7 +184,7 @@ const ProductDetails = ({ data }) => {
                         size={30}
                         className="cursor-pointer"
                         onClick={() => removeFromWishlistHandler(data)}
-                       // onClick={() => setClick(!click)}
+                        // onClick={() => setClick(!click)}
                         color={click ? "red" : "#333"}
                         title="Remove from wishlist"
                       />
@@ -199,7 +201,7 @@ const ProductDetails = ({ data }) => {
                 </div>
                 <div
                   className={`${styles.button} mt-6 !rounded-[4px] !h-11 flex items-center`}
-                   onClick={() => addToCartHandler(data._id)}
+                  onClick={() => addToCartHandler(data._id)}
                 >
                   <span className="text-[#fff] flex items-center">
                     Add to cart <AiOutlineShoppingCart className="ml-1" />
@@ -208,7 +210,7 @@ const ProductDetails = ({ data }) => {
                 <div className="flex items-center pt-8">
                   <Link to={`/shop/preview/${data?.shop._id}`}>
                     <img
-                       src={`${data?.shop?.avatar?.url}`}
+                      src={`${data?.shop?.avatar?.url}`}
                       alt=""
                       className="w-[50px] h-[50px] rounded-full mr-2"
                     />
@@ -220,7 +222,7 @@ const ProductDetails = ({ data }) => {
                       </h3>
                     </Link>
                     <h5 className="pb-3 text-[15px]">
-                    ({averageRating}/5) Ratings
+                      ({averageRating}/5) Ratings
                       {/* (4/5)Ratings */}
                     </h5>
                   </div>
@@ -236,7 +238,12 @@ const ProductDetails = ({ data }) => {
               </div>
             </div>
           </div>
-          <ProductDetailsInfo data={data} products={products} totalReviewsLength={totalReviewsLength} averageRating={averageRating}/>
+          <ProductDetailsInfo
+            data={data}
+            products={products}
+            totalReviewsLength={totalReviewsLength}
+            averageRating={averageRating}
+          />
           <br />
           <br />
         </div>
@@ -245,7 +252,12 @@ const ProductDetails = ({ data }) => {
   );
 };
 
-const ProductDetailsInfo = ({ data, products,totalReviewsLength,averageRating }) => {
+const ProductDetailsInfo = ({
+  data,
+  products,
+  totalReviewsLength,
+  averageRating,
+}) => {
   const [active, setActive] = useState(1);
 
   return (
@@ -298,13 +310,13 @@ const ProductDetailsInfo = ({ data, products,totalReviewsLength,averageRating })
           </p>
         </>
       ) : null}
-  {active === 2 ? (
+      {active === 2 ? (
         <div className="w-full min-h-[40vh] flex flex-col items-center py-3 overflow-y-scroll">
           {data &&
             data.reviews?.map((item, index) => (
               <div className="w-full flex my-2">
                 <img
-                 src={`${item.user.avatar?.url}`}
+                  src={`${item.user.avatar?.url}`}
                   alt=""
                   className="w-[50px] h-[50px] rounded-full"
                 />
@@ -332,7 +344,7 @@ const ProductDetailsInfo = ({ data, products,totalReviewsLength,averageRating })
             <Link to={`/shop/preview/${data.shop._id}`}>
               <div className="flex items-center">
                 <img
-                 src={`${data?.shop?.avatar?.url}`}
+                  src={`${data?.shop?.avatar?.url}`}
                   className="w-[50px] h-[50px] rounded-full"
                   alt=""
                 />
