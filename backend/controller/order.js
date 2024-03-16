@@ -6,6 +6,7 @@ const { isAuthenticated, isSeller, isAdmin } = require("../middleware/auth");
 const Order = require("../model/order");
 const Shop = require("../model/shop");
 const Product = require("../model/product");
+const sendMail = require("../utils/sendMail");
 
 // create new order
 router.post(
@@ -38,7 +39,11 @@ router.post(
         });
         orders.push(order);
       }
-
+      await sendMail({
+        email: user.email,
+        subject: "Your E-Shop order has been received!",
+        message: `Hello ${user.name}, Just to let you know — we've received your order #${orders[0]._id}, and it is now being processed:`,
+      });
       res.status(201).json({
         success: true,
         orders,
