@@ -12,19 +12,15 @@ const sendMail = require("../utils/sendMail");
 const sendToken = require("../utils/jwtToken");
 const { isAuthenticated, isAdmin } = require("../middleware/auth");
 
-// Load environment variables
-// if (process.env.NODE_ENV !== "production") {
-//   require("dotenv").config({
-//     path: path.join(__dirname, "./config/.env")
-//   });
-// }
-// } else {
-//   // In production, you might not need to specify the path
-//   require("dotenv").config();
-// }
 // create user
 router.post("/create-user", async (req, res, next) => {
   try {
+    // config
+    if (process.env.NODE_ENV !== "PRODUCTION") {
+      require("dotenv").config({
+        path: "config/.env",
+      });
+    }
     //console.log(req.body)
     const { name, email, password, avatar } = req.body;
     const userEmail = await User.findOne({ email });
@@ -32,25 +28,27 @@ router.post("/create-user", async (req, res, next) => {
     if (userEmail) {
       return next(new ErrorHandler("User already exists", 400));
     }
-
-    const myCloud = await cloudinary.v2.uploader.upload(avatar, {
-      folder: "avatars",
-    });
-
+    let userAvatar = {};
+    if (avatar) {
+      const myCloud = await cloudinary.v2.uploader.upload(avatar, {
+        folder: "avatars",
+      });
+      userAvatar = {
+        public_id: myCloud.public_id,
+        url: myCloud.secure_url,
+      };
+    }
     const user = {
       name: name,
       email: email,
       password: password,
-      avatar: {
-        public_id: myCloud.public_id,
-        url: myCloud.secure_url,
-      },
+      avatar: userAvatar,
     };
 
     const activationToken = createActivationToken(user);
-    const activationUrl = `https://e-shop-njoh.vercel.app/activation/${activationToken}`;
-    //const activationUrl = `https://eshop-tutorial-pyri.vercel.app/activation/${activationToken}`;
-
+    //const activationUrl = `https://e-shop-njoh.vercel.app/activation/${activationToken}`;
+    const activationUrl = `${process.env.FBASE_URL}/activation/${activationToken}`;
+    console.log(process.env.FBASE_URL);
     try {
       await sendMail({
         email: user.email,
@@ -233,22 +231,30 @@ router.put(
   catchAsyncErrors(async (req, res, next) => {
     try {
       let existsUser = await User.findById(req.user.id);
+
       if (req.body.avatar !== "") {
-        const imageId = existsUser.avatar.public_id;
+        // Delete existing avatar if it exists
+        if (existsUser.avatar && existsUser.avatar.public_id) {
+          await cloudinary.v2.uploader.destroy(existsUser.avatar.public_id);
+        }
 
-        await cloudinary.v2.uploader.destroy(imageId);
-
+        // Upload new avatar
         const myCloud = await cloudinary.v2.uploader.upload(req.body.avatar, {
           folder: "avatars",
           width: 150,
         });
 
+        // Update user's avatar
         existsUser.avatar = {
           public_id: myCloud.public_id,
           url: myCloud.secure_url,
         };
+      } else {
+        // If avatar is empty, remove it from user document
+        existsUser.avatar = undefined;
       }
 
+      // Save updated user
       await existsUser.save();
 
       res.status(200).json({
@@ -260,6 +266,7 @@ router.put(
     }
   })
 );
+
 
 // update user addresses
 router.put(
