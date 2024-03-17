@@ -27,6 +27,7 @@ const ProfileSidebar = ({ setActive, active }) => {
         navigate("/login");
       })
       .catch((error) => {
+        console.log(error.response.data.message);
       });
   };
   return (
