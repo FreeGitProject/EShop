@@ -6,8 +6,8 @@ const { isAuthenticated, isSeller, isAdmin } = require("../middleware/auth");
 const Order = require("../model/order");
 const Shop = require("../model/shop");
 const Product = require("../model/product");
-const sendMail = require("../utils/sendMail");
-
+const OrderMailer = require("../utils/orderMailer");
+const orderMailer = new OrderMailer();
 // create new order
 router.post(
   "/create-order",
@@ -39,11 +39,86 @@ router.post(
         });
         orders.push(order);
       }
-      await sendMail({
+      // Construct the HTML email message
+      const orderId = orders[0]._id; // Assuming you want to use the first order ID
+      const subTotalPrice = orders[0].cart.reduce(
+        (acc, item) => acc + item.qty * item.discountPrice,
+        0
+      );
+
+      // Calculate shipping cost (assuming it's 10% of the subtotal)
+      const shipping = subTotalPrice * 0.1;
+
+      const orderItemsHTML = orders[0].cart
+        .map(
+          (item) => `
+    <tr>
+        <td>${item.name}</td>
+        <td>x${item.qty}</td>
+        ${item.size ? `<td>${item.size}</td>` : "<td>-</td>"}
+        ${item.color ? `<td>${item.color}</td>` : "<td>-</td>"}
+        <td><del>$${item.originalPrice}</del> $${item.discountPrice}</td>
+    </tr>
+`
+        )
+        .join("");
+
+      const paymentDetailsHTML = `
+    <tr>
+        <td colspan="4"><strong>Shipping Charge: $${shipping.toFixed(
+          2
+        )}</strong></td>
+    </tr>
+    <tr>
+        <td colspan="4"><strong>Total Payment: $${totalPrice}</strong></td>
+    </tr>
+    <tr>
+        <td colspan="3">Payment Type: ${paymentInfo.type}</td>
+        ${
+          paymentInfo.status
+            ? `<td>Status: ${paymentInfo.status}</td>`
+            : "<td>Status:-</td>"
+        }
+    </tr>
+`;
+
+      const billingAddressHTML = `
+    <tr>
+        <td><strong>Billing Address</strong></td>
+        <td><strong>Shipping Address</strong></td>
+    </tr>
+    <tr>
+        <td>${shippingAddress.address1}, ${shippingAddress.address2}, ${shippingAddress.zipCode}</td>
+        <td>${user.addresses[0].address1}, ${user.addresses[0].address2}, ${user.addresses[0].zipCode}</td>
+    </tr>
+`;
+
+      const emailSubject = "Your E-Shop order has been received!";
+      const emailHTML = `
+    <p>Hello ${user.name},</p>
+    <p>Just to let you know — we've received your order #${orderId}, and it is now being processed:</p>
+    <strong>Order Summary:</strong>
+    <table border="1" cellpadding="5">
+        <tr>
+            <td>Name</td>
+            <td>QTY</td>
+            <td>Size</td>
+            <td>Color</td>
+            <td>Price</td>
+        </tr>
+        ${orderItemsHTML}
+        ${paymentDetailsHTML}
+        ${billingAddressHTML}
+    </table>
+`;
+
+      // Send the email
+      await orderMailer.sendOrderConfirmation({
         email: user.email,
-        subject: "Your E-Shop order has been received!",
-        message: `Hello ${user.name}, Just to let you know — we've received your order #${orders[0]._id}, and it is now being processed:`,
+        subject: emailSubject,
+        html: emailHTML,
       });
+
       res.status(201).json({
         success: true,
         orders,
@@ -116,7 +191,7 @@ router.put(
       if (req.body.status === "Delivered") {
         order.deliveredAt = Date.now();
         order.paymentInfo.status = "Succeeded";
-        const serviceCharge = order.totalPrice * .10;
+        const serviceCharge = order.totalPrice * 0.1;
         await updateSellerInfo(order.totalPrice - serviceCharge);
       }
 
@@ -138,7 +213,7 @@ router.put(
 
       async function updateSellerInfo(amount) {
         const seller = await Shop.findById(req.seller.id);
-        
+
         seller.availableBalance = amount;
 
         await seller.save();

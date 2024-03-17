@@ -16,6 +16,7 @@ import { server } from "../../server";
 import { toast } from "react-toastify";
 import { RxCross1 } from "react-icons/rx";
 
+
 const Payment = () => {
   const [orderData, setOrderData] = useState([]);
   const [open, setOpen] = useState(false);
@@ -23,7 +24,7 @@ const Payment = () => {
   const navigate = useNavigate();
   const stripe = useStripe();
   const elements = useElements();
-
+  console.log("stripe:",stripe,elements)
   useEffect(() => {
     const orderData = JSON.parse(localStorage.getItem("latestOrder"));
     setOrderData(orderData);
@@ -86,8 +87,9 @@ const Payment = () => {
     await axios
       .post(`${server}/order/create-order`, order, config)
       .then((res) => {
+        const orderId = res.data.orders[0]._id;
         setOpen(false);
-        navigate("/order/success");
+        navigate("/order/success", { state: { orderId } }); // Pass orderId as state
         toast.success("Order successful!");
         localStorage.setItem("cartItems", JSON.stringify([]));
         localStorage.setItem("latestOrder", JSON.stringify([]));
@@ -116,7 +118,7 @@ const Payment = () => {
       );
 
       const client_secret = data.client_secret;
-
+console.log("stripe: client_secret:",stripe, client_secret)
       if (!stripe || !elements) return;
       const result = await stripe.confirmCardPayment(client_secret, {
         payment_method: {
@@ -137,8 +139,9 @@ const Payment = () => {
           await axios
             .post(`${server}/order/create-order`, order, config)
             .then((res) => {
+              const orderId = res.data.orders[0]._id;
               setOpen(false);
-              navigate("/order/success");
+              navigate("/order/success", { state: { orderId } }); // Pass orderId as state
               toast.success("Order successful!");
               localStorage.setItem("cartItems", JSON.stringify([]));
               localStorage.setItem("latestOrder", JSON.stringify([]));
@@ -167,7 +170,6 @@ const Payment = () => {
     await axios
     .post(`${server}/order/create-order`, order, config)
     .then((res) => {
-      console.log(res.data.orders[0]._id);
       const orderId = res.data.orders[0]._id;
       setOpen(false);
       navigate("/order/success", { state: { orderId } }); // Pass orderId as state
@@ -362,7 +364,7 @@ const PaymentInfo = ({
                     <PayPalScriptProvider
                       options={{
                         "client-id":
-                          "Aczac4Ry9_QA1t4c7TKH9UusH3RTe6onyICPoCToHG10kjlNdI-qwobbW9JAHzaRQwFMn2-k660853jn",
+                          "AcKeDKNp6rHda7BkJ4ah0ZaUDovqqEhEY3KIVo4HWhFlhB1Mpf0zCODgHjxQYzJ1592Pk466gtz_s4i8",
                       }}
                     >
                       <PayPalButtons
