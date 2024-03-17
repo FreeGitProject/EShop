@@ -20,7 +20,7 @@ const UserOrderDetails = () => {
   const [rating, setRating] = useState(1);
 
   const { id } = useParams();
-console.log("userOderDetail",id);
+
   useEffect(() => {
     dispatch(getAllOrdersOfUser(user._id));
   }, [dispatch,user._id]);

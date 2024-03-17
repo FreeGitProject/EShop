@@ -13,7 +13,7 @@ const BestDeals = () => {
     const firstFive = sortedData && sortedData.slice(0, 5);
     setData(firstFive);
   }, [allProducts]);
-  console.log("best deat",allProducts);
+
  
   return (
     <div>

@@ -31,7 +31,6 @@ const Header = ({ activeHeading }) => {
   const [openWishlist, setOpenWishlist] = useState(false);
   const [open, setOpen] = useState(false);
   const {allProducts} = useSelector((state) => state.products);
-console.log("header",isAuthenticated, user,cart)
   const handleSearchChange = (e) => {
     const term = e.target.value;
     setSearchTerm(term);
@@ -309,7 +308,7 @@ console.log("header",isAuthenticated, user,cart)
                   <div>
                     <Link to="/profile">
                       <img
-                         src={`${backend_url}${user.avatar}`}
+                        src={`${user?.avatar?.url}`}
                         alt=""
                         className="w-[60px] h-[60px] rounded-full border-[3px] border-[#0eae88]"
                       />

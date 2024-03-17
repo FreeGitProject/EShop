@@ -30,7 +30,6 @@ const ProductDetails = ({ data }) => {
   const navigate = useNavigate();
 
   const dispatch = useDispatch();
-  console.log("ProductDetails", products, data);
   useEffect(() => {
     dispatch(getAllProductsShop(data && data?.shop._id));
     if (wishlist && wishlist.find((i) => i._id === data?._id)) {
@@ -118,8 +117,8 @@ const ProductDetails = ({ data }) => {
         <div className={`${styles.section} w-[90%] 800px:w-[80%]`}>
           <div className="w-full py-5">
             <div className="block w-full 800px:flex justify-between">
-              <div className="w-full 800px:w-[50%]">
-                <div className="w-[90%] h-[600px] border border-qgray-border flex justify-center items-center overflow-hidden relative mb-3">
+              <div className="w-full 800px:w-[50%] p-5">
+                <div className="w-full h-[600px] border border-qgray-border flex justify-center items-center overflow-hidden relative mb-3">
                   <img
                     src={`${data && data.images[select]?.url}`}
                     alt=""

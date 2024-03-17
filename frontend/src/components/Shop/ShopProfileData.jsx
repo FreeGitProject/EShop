@@ -15,7 +15,7 @@ const ShopProfileData = ({ isOwner }) => {
    //const { seller } = useSelector((state) => state.seller);
   const { id } = useParams();
   const dispatch = useDispatch();
-console.log(products)
+
   useEffect(() => {
     dispatch(getAllProductsShop(id));
     dispatch(getAllEventsShop(id));
