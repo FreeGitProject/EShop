@@ -5,7 +5,6 @@ import EventCard from "./EventCard.jsx";
 
 const Events = () => {
   const { allEvents, isLoading } = useSelector((state) => state.events);
-  console.log(allEvents,isLoading)
   return (
     <div>
       {!isLoading && (

@@ -44,45 +44,7 @@ const Signup = () => {
         console.log(error.response.data.message);
       });
   };
-  // const handleSubmit = (e) => {
-  //   e.preventDefault();
-  //   const config={headers:{"Content-Type":"multipart/form-data"}};
-  //   const newForm= new FormData();
-  //   newForm.append("avatar",avatar);
-  //   newForm.append("name",name);
-  //   newForm.append("email",email);
-  //   newForm.append("password",password);
-  //   //console.log(newForm);
-  //   axios.post(`${server}/user/create-user`, newForm,config).then((res) => {
-  //     //  if(res.data.success=== true)
-  //     //  {
-  //       toast.success(res.data.message);
-  //       setName('');
-  //       setEmail('');
-  //       setPassword('');
-  //       setAvatar();
-  //     })
-  //     .catch((error) => {
-  //      console.log(error.response.data.message)
-  //      toast.error(error.response.data.message);
-  //     });
-  //   // fetch(`${server}/user/create-user`, {
-  //   //   method: 'POST',
-  //   //   headers: {
-  //   //     'Content-Type': 'multipart/form-data',
-  //   //     // Add any other headers if needed
-  //   //   }//,
-  //   //   //body: JSON.stringify(newForm),
-  //   // })
-  //   //   .then(response => response.json())
-  //   //   .then(data => {
-  //   //     console.log(data);
-  //   //   })
-  //   //   .catch(error => {
-  //   //     console.error('Error:', error);
-  //   //   });
-  //   //
-  // };
+
 
   return (
     <div className="min-h-screen bg-gray-50 flex flex-col justify-center py-12 sm:px-6 lg:px-8">

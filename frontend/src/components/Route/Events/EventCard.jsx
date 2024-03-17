@@ -8,7 +8,6 @@ import { toast } from "react-toastify";
 import { backend_url } from "../../../server.js";
 
 const EventCard = ({active,data}) => {
-  console.log("eventCart",data);
     const { cart } = useSelector((state) => state.cart);
     const dispatch = useDispatch();
 

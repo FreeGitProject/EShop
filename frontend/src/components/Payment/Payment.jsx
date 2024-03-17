@@ -167,7 +167,6 @@ const Payment = () => {
     await axios
     .post(`${server}/order/create-order`, order, config)
     .then((res) => {
-      console.log(res.data.orders[0]._id);
       const orderId = res.data.orders[0]._id;
       setOpen(false);
       navigate("/order/success", { state: { orderId } }); // Pass orderId as state

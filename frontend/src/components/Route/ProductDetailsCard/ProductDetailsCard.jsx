@@ -23,8 +23,6 @@ const ProductDetailsCard = ({ setOpen, data }) => {
   const [count, setCount] = useState(1);
   const [click, setClick] = useState(false);
   const dispatch = useDispatch();
-  //const [select, setSelect] = useState(false);
-console.log(data)
   const handleMessageSubmit = () => {};
   const decrementCount = () => {
     if (count > 1) {

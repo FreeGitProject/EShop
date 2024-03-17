@@ -12,7 +12,6 @@ import { backend_url } from "../../server";
 const Cart = ({ setOpenCart }) => {
   const { cart } = useSelector((state) => state.cart);
   const dispatch = useDispatch();
-console.log(setOpenCart,cart);
   const removeFromCartHandler = (data) => {
     dispatch(removeFromCart(data));
   };
@@ -93,7 +92,6 @@ console.log(setOpenCart,cart);
 };
 
 const CartSingle = ({ data  , quantityChangeHandler, removeFromCartHandler }) => {
-  console.log(data);
   const [value, setValue] = useState(data.qty);
   const totalPrice = data.discountPrice * value;
 

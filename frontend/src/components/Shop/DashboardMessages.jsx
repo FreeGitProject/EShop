@@ -56,7 +56,7 @@ const DashboardMessages = () => {
 
         setConversations(resonse.data.conversations);
       } catch (error) {
-        // console.log(error);
+       
       }
     };
     getConversation();
@@ -264,7 +264,7 @@ const MessageList = ({
   setActiveStatus,
   isLoading
 }) => {
-  console.log(data);
+  
   const [user, setUser] = useState([]);
   const navigate = useNavigate();
   const handleClick = (id) => {
