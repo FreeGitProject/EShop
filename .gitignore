@@ -5,6 +5,7 @@ backend/config/.env
 /frontend/.env
 backend/node_modules
 socket/node_modules
+start-both.sh
 #backend/uploads
 #uploads
 npm-debug.log*
