@@ -32,8 +32,13 @@ const ShopInfo = ({ isOwner }) => {
   const logoutHandler = async () => {
     axios.get(`${server}/shop/logout`,{
       withCredentials: true,
+    }).then((res) => {
+      console.log(res.data.message);
+      window.location.reload(true);
+    })
+    .catch((error) => {
+      console.log(error.response.data.message);
     });
-    window.location.reload();
   };
 
   const totalReviewsLength =
