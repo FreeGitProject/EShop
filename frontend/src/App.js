@@ -47,6 +47,7 @@ import {
   ShopSettingsPage,
   ShopWithDrawMoneyPage,
   ShopInboxPage,
+  ShopCreateCategoryPage,
 } from "./routes/ShopRoutes.js";
 import {
   AdminDashboardPage,
@@ -194,6 +195,14 @@ const App = () => {
           element={
             <SellerProtectedRoute>
               <ShopDashboardPage />
+            </SellerProtectedRoute>
+          }
+        />
+        <Route
+          path="/dashboard-create-category"
+          element={
+            <SellerProtectedRoute>
+              <ShopCreateCategoryPage />
             </SellerProtectedRoute>
           }
         />
