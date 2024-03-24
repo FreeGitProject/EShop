@@ -1,15 +1,15 @@
 const express = require("express");
-const { isSeller ,isAuthenticated,isAdmin} = require("../middleware/auth");
+const { isSeller, isAuthenticated, isAdmin } = require("../middleware/auth");
 const router = express.Router();
 const Product = require("../model/product");
 const Shop = require("../model/shop");
+const Category = require("../model/category");
 const { upload } = require("../multer");
 const cloudinary = require("cloudinary");
 const catchAsyncErrors = require("../middleware/catchAsyncErrors");
 const ErrorHandler = require("../utils/ErrorHandler");
-const fs=require("fs");
+const fs = require("fs");
 const order = require("../model/order");
-
 
 // create product
 router.post(
@@ -28,20 +28,20 @@ router.post(
         } else {
           images = req.body.images;
         }
-      
+
         const imagesLinks = [];
-      
+
         for (let i = 0; i < images.length; i++) {
           const result = await cloudinary.v2.uploader.upload(images[i], {
             folder: "products",
           });
-      
+
           imagesLinks.push({
             public_id: result.public_id,
             url: result.secure_url,
           });
         }
-      
+
         const productData = req.body;
         productData.images = imagesLinks;
         productData.shop = shop;
@@ -95,8 +95,7 @@ router.delete(
         });
       });
       const product = await Product.findByIdAndDelete(productId);
-      
- 
+
       if (!product) {
         return next(new ErrorHandler("Product not found with this id!", 500));
       }
@@ -143,7 +142,7 @@ router.put(
         comment,
         productId,
       };
-console.log("review");
+      console.log("review");
       const isReviewed = product.reviews.find(
         (rev) => rev.user._id === req.user._id
       );
@@ -177,6 +176,87 @@ console.log("review");
       res.status(200).json({
         success: true,
         message: "Reviwed succesfully!",
+      });
+    } catch (error) {
+      return next(new ErrorHandler(error, 400));
+    }
+  })
+);
+
+// create category for shop
+router.post(
+  "/create-category",
+  isSeller,
+  catchAsyncErrors(async (req, res, next) => {
+    try {
+      const { name, code, shopId } = req.body;
+
+      // Check if shopId is valid
+      // Assuming you have a Shop model imported and defined similarly to Category model
+      const shop = await Shop.findById(shopId);
+      if (!shop) {
+        return next(new ErrorHandler("Shop Id is invalid!", 400));
+      }
+      // Check if category code is duplicate
+      const existingCategory = await Category.findOne({ code, shopId });
+      if (existingCategory) {
+        return next(new ErrorHandler("Category code already exists!", 400));
+      }
+      // Create the category
+      const categoryData = {
+        name,
+        code,
+        shopId,
+      };
+      const category = await Category.create(categoryData);
+
+      res.status(201).json({
+        success: true,
+        category,
+      });
+    } catch (error) {
+      return next(new ErrorHandler(error, 400));
+    }
+  })
+);
+//get all categories for shop
+router.get(
+  "/get-categories/:id",
+  isSeller, // Assuming you have middleware to check if the user is a seller
+  catchAsyncErrors(async (req, res, next) => {
+    try {
+      const shopId = req.params.id;
+
+      // Find all categories belonging to the shopId
+      const categories = await Category.find({ shopId });
+
+      res.status(200).json({
+        success: true,
+        categories,
+      });
+    } catch (error) {
+      return next(new ErrorHandler(error, 400));
+    }
+  })
+);
+//delete-category for shop
+router.delete(
+  "/delete-category/:id",
+  isSeller, // Assuming you have middleware to check if the user is a seller
+  catchAsyncErrors(async (req, res, next) => {
+    try {
+      const categoryId = req.params.id;
+
+      // Find the category by ID and delete it
+      const category = await Category.findByIdAndDelete(categoryId);
+
+      if (!category) {
+        return next(new ErrorHandler("Category doesn't exist!", 400));
+      }
+
+      res.status(200).json({
+        success: true,
+        message: "Category deleted successfully!",
       });
     } catch (error) {
       return next(new ErrorHandler(error, 400));
