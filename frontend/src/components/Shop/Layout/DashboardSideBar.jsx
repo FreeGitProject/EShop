@@ -6,13 +6,13 @@ import { RxDashboard } from "react-icons/rx";
 import { VscNewFile } from "react-icons/vsc";
 import { CiMoneyBill, CiSettings } from "react-icons/ci";
 import { Link } from "react-router-dom";
-import { BiMessageSquareDetail } from "react-icons/bi";
+import { BiMessageSquareDetail,BiImport  } from "react-icons/bi";
 import { HiOutlineReceiptRefund } from "react-icons/hi";
 
 const DashboardSideBar = ({ active }) => {
   return (
     <div className="w-full h-[90vh] bg-white shadow-sm overflow-y-scroll sticky top-0 left-0 z-10">
-      {/* single item 1 to 12 ,13,*/}
+      {/* single item 1 to 12 ,13,14,*/}
       <div className="w-full flex items-center p-4">
         <Link to="/dashboard" className="w-full flex items-center">
           <RxDashboard
@@ -44,7 +44,24 @@ const DashboardSideBar = ({ active }) => {
           </h5>
         </Link>
       </div>
-
+      <div className="w-full flex items-center p-4">
+        <Link
+          to="/dashboard-bulk-import"
+          className="w-full flex items-center"
+        >
+          <BiImport   
+            size={30}
+            color={`${active === 14 ? "crimson" : "#555"}`}
+          />
+          <h5
+            className={`hidden 800px:block pl-2 text-[18px] font-[400] ${
+              active === 14 ? "text-[crimson]" : "text-[#555]"
+            }`}
+          >
+            Bulk Import
+          </h5>
+        </Link>
+      </div>
       <div className="w-full flex items-center p-4">
         <Link to="/dashboard-products" className="w-full flex items-center">
           <FiPackage size={30} color={`${active === 3 ? "crimson" : "#555"}`} />
