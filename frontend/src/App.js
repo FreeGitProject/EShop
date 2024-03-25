@@ -48,6 +48,7 @@ import {
   ShopWithDrawMoneyPage,
   ShopInboxPage,
   ShopCreateCategoryPage,
+  ShopBulkImportPage,
 } from "./routes/ShopRoutes.js";
 import {
   AdminDashboardPage,
@@ -195,6 +196,14 @@ const App = () => {
           element={
             <SellerProtectedRoute>
               <ShopDashboardPage />
+            </SellerProtectedRoute>
+          }
+        />
+         <Route
+          path="/dashboard-bulk-import"
+          element={
+            <SellerProtectedRoute>
+              <ShopBulkImportPage />
             </SellerProtectedRoute>
           }
         />
