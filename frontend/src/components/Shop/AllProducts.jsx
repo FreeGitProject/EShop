@@ -7,6 +7,7 @@ import { Link } from 'react-router-dom';
 import { getAllProductsShop } from '../../reducx/actions/product';
 import { deleteProduct } from '../../reducx/actions/product';
 import Loader from '../Layout/Loader';
+import { toast } from 'react-toastify';
  
 const AllProducts = () => {
   const { products, isLoading } = useSelector((state) => state.products);
@@ -18,9 +19,19 @@ const AllProducts = () => {
     dispatch(getAllProductsShop(seller._id));
   }, [dispatch]);
 
-  const handleDelete = (id) => {
-    dispatch(deleteProduct(id));
-    window.location.reload();
+  const handleDelete = async (id) => {
+    try {
+      const response = await dispatch(deleteProduct(id));
+      if (response && response.message) {
+        toast.success(response.message); // Display success message if available
+      } else {
+        throw new Error("Response message not found");
+      }
+     // window.location.reload();
+    } catch (error) {
+      toast.error("Failed to delete product"); // Display a generic error message
+      console.error(error); // Log the error for debugging purposes
+    }
   };
 
   const columns = [
