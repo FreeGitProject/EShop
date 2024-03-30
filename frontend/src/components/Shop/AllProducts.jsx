@@ -7,6 +7,7 @@ import { Link } from 'react-router-dom';
 import { getAllProductsShop } from '../../reducx/actions/product';
 import { deleteProduct } from '../../reducx/actions/product';
 import Loader from '../Layout/Loader';
+import { toast } from 'react-toastify';
  
 const AllProducts = () => {
   const { products, isLoading } = useSelector((state) => state.products);
@@ -19,9 +20,18 @@ const AllProducts = () => {
   }, [dispatch]);
 
   const handleDelete = (id) => {
-    dispatch(deleteProduct(id));
-    window.location.reload();
+    dispatch(deleteProduct(id))
+      .then(response => {
+        toast.success("Product deleated successfully!");
+
+        console.log(response.data.message); // Assuming response contains the message
+      })
+      .catch(error => {
+        console.error(error); // Log any errors that occur during the API call
+      });
+      
   };
+  
 
   const columns = [
     {
