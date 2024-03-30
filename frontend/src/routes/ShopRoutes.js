@@ -14,6 +14,7 @@ import ShopWithDrawMoneyPage from "../pages/Shop/ShopWithDrawMoneyPage.jsx";
 import ShopInboxPage from "../pages/Shop/ShopInboxPage.jsx";
 import ShopCreateCategoryPage from "../pages/Shop/ShopCreateCategoryPage.jsx";
 import ShopBulkImportPage from "../pages/Shop/ShopBulkImportPage.jsx";
+import ShopEditProductPage from "../pages/Shop/ShopEditProductPage.jsx";
 
 
 export {
@@ -33,4 +34,5 @@ export {
   ShopInboxPage,
   ShopCreateCategoryPage,
   ShopBulkImportPage,
+  ShopEditProductPage,
 };
