@@ -58,6 +58,67 @@ router.post(
     }
   })
 );
+// update product
+router.post(
+  "/update-product",
+  catchAsyncErrors(async (req, res, next) => {
+    try {
+      const productId = req.body.id;
+      const product = await Product.findById(productId);
+      if (!product) {
+        return next(new ErrorHandler("Product not found!", 404));
+      } else {
+        let images = [];
+
+        if (typeof req.body.images === "string") {
+          images.push(req.body.images);
+        } else {
+          images = req.body.images;
+        }
+
+        const imagesLinks = [];
+
+        for (let i = 0; i < images.length; i++) {
+          let existingImage = product.images.find(
+            (img) => img.url === images[i]
+          );
+
+          if (existingImage) {
+            // If image already exists in product images, reuse existing data
+            imagesLinks.push(existingImage);
+          } else {
+            // Upload image to Cloudinary
+            const result = await cloudinary.v2.uploader.upload(images[i], {
+              folder: "products",
+            });
+
+            imagesLinks.push({
+              public_id: result.public_id,
+              url: result.secure_url,
+            });
+          }
+        }
+
+        const productData = req.body;
+        productData.images = imagesLinks;
+
+        const updatedProduct = await Product.findByIdAndUpdate(
+          productId,
+          productData,
+          { new: true }
+        );
+
+        res.status(200).json({
+          success: true,
+          product: updatedProduct,
+        });
+      }
+    } catch (error) {
+      return next(new ErrorHandler(error, 400));
+    }
+  })
+);
+
 // get all products of a shop
 router.get(
   "/get-all-products-shop/:id",

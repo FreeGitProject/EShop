@@ -49,6 +49,7 @@ import {
   ShopInboxPage,
   ShopCreateCategoryPage,
   ShopBulkImportPage,
+  ShopEditProductPage,
 } from "./routes/ShopRoutes.js";
 import {
   AdminDashboardPage,
@@ -220,6 +221,14 @@ const App = () => {
           element={
             <SellerProtectedRoute>
               <ShopCreateProduct />
+            </SellerProtectedRoute>
+          }
+        />
+          <Route
+          path="/dashboard-edit-product/:id"
+          element={
+            <SellerProtectedRoute>
+              <ShopEditProductPage />
             </SellerProtectedRoute>
           }
         />

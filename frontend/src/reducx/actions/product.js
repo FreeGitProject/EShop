@@ -45,6 +45,51 @@ export const createProduct =
     }
   };
 
+  // update product
+export const updateProduct =
+(
+  id,
+  name,
+  description,
+  category,
+  tags,
+  originalPrice,
+  discountPrice,
+  stock,
+  shopId,
+  images
+) =>
+async (dispatch) => {
+  try {
+    dispatch({
+      type: "productUpdateRequest",
+    });
+
+    const { data } = await axios.post(
+      `${server}/product/update-product`,
+      id,
+      name,
+      description,
+      category,
+      tags,
+      originalPrice,
+      discountPrice,
+      stock,
+      shopId,
+      images,
+    );
+    dispatch({
+      type: "productUpdateSuccess",
+      payload: data.product,
+    });
+  } catch (error) {
+    dispatch({
+      type: "productUpdateFail",
+      payload: error.response.data.message,
+    });
+  }
+};
+
 // get All Products of a shop
 export const getAllProductsShop = (id) => async (dispatch) => {
   try {
@@ -112,3 +157,5 @@ export const getAllProducts = () => async (dispatch) => {
     });
   }
 };
+
+

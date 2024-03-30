@@ -6,6 +6,7 @@ const initialState = {
 
 export const productReducer = createReducer(initialState, (builder) => {
   builder
+  //productCreate
     .addCase("productCreateRequest", (state) => {
       state.isLoading = true;
     })
@@ -15,6 +16,20 @@ export const productReducer = createReducer(initialState, (builder) => {
       state.success = true;
     })
     .addCase("productCreateFail", (state, action) => {
+      state.isLoading = false;
+      state.error = action.payload;
+      state.success = false;
+    })
+    //productUpdate
+    .addCase("productUpdateRequest", (state) => {
+      state.isLoading = true;
+    })
+    .addCase("productUpdateSuccess", (state, action) => {
+      state.isLoading = false;
+      state.product = action.payload;
+      state.success = true;
+    })
+    .addCase("productUpdateFail", (state, action) => {
       state.isLoading = false;
       state.error = action.payload;
       state.success = false;
