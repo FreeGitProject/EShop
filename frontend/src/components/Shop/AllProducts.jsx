@@ -19,19 +19,20 @@ const AllProducts = () => {
     dispatch(getAllProductsShop(seller._id));
   }, [dispatch]);
 
-  const handleDelete = (id) => {
-    dispatch(deleteProduct(id))
-      .then(response => {
-        toast.success("Product deleated successfully!");
-
-        console.log(response.data.message); // Assuming response contains the message
-      })
-      .catch(error => {
-        console.error(error); // Log any errors that occur during the API call
-      });
-      
+  const handleDelete = async (id) => {
+    try {
+      const response = await dispatch(deleteProduct(id));
+      if (response && response.message) {
+        toast.success(response.message); // Display success message if available
+      } else {
+        throw new Error("Response message not found");
+      }
+     // window.location.reload();
+    } catch (error) {
+      toast.error("Failed to delete product"); // Display a generic error message
+      console.error(error); // Log the error for debugging purposes
+    }
   };
-  
 
   const columns = [
     {
