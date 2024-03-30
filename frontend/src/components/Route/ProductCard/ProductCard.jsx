@@ -26,6 +26,7 @@ const ProductCard = ({ data,isEvent }) => {
   const [click, setClick] = useState(false);
   const [open, setOpen] = useState(false);
   const dispatch = useDispatch();
+  const [hovered, setHovered] = useState(false);
   
   // const d = data.name;
   // const product_name = d.replace(/\s+/g, "-");
@@ -63,7 +64,12 @@ const ProductCard = ({ data,isEvent }) => {
   };
   return (
     <>
-      <div className="w-full h-[370px] bg-white rounded-lg shadow-sm p-3 relative cursor-pointer">
+      <div
+      className="w-full h-[370px] bg-white rounded-lg shadow-sm p-3 relative cursor-pointer"
+      onMouseEnter={() => setHovered(true)}
+      onMouseLeave={() => setHovered(false)}
+    >
+      
         <div className="flex justify-end"></div>
         <Link to={`${isEvent === true ? `/product/${data._id}?isEvent=true` : `/product/${data._id}`}`}>
           <img
@@ -98,6 +104,8 @@ const ProductCard = ({ data,isEvent }) => {
         </Link>
         {/* side options */}
         <div>
+        {hovered && (
+          <>
           {click ? (
             <AiFillHeart
               size={22}
@@ -131,7 +139,11 @@ const ProductCard = ({ data,isEvent }) => {
             color="#444"
             title="Add to cart"
           />
+          </>
+        )
+          }
           {open ? <ProductDetailsCard setOpen={setOpen} data={data} /> : null}
+          
         </div>
       </div>
     </>
