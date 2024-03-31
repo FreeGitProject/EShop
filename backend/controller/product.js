@@ -181,6 +181,49 @@ router.delete(
   })
 );
 
+//delete-shop-products multi delete
+router.delete(
+  "/delete-shop-products",
+  isSeller,
+  catchAsyncErrors(async (req, res, next) => {
+    try {
+      const { productIds } = req.body;
+
+      if (!productIds || !Array.isArray(productIds) || productIds.length === 0) {
+        return next(new ErrorHandler("Product IDs are required and should be provided as an array", 400));
+      }
+
+      // Find and delete each product
+      for (let i = 0; i < productIds.length; i++) {
+        const productId = productIds[i];
+        const product = await Product.findById(productId);
+
+        if (!product) {
+          return next(new ErrorHandler(`Product with ID ${productId} not found`, 404));
+        }
+
+        // Delete product images from cloudinary
+        for (let j = 0; j < product.images.length; j++) {
+          const result = await cloudinary.v2.uploader.destroy(
+            product.images[j].public_id
+          );
+        }
+
+        // Delete product from database
+        await Product.findByIdAndDelete(productId);
+      }
+
+      res.status(200).json({
+        success: true,
+        message: "Products deleted successfully",
+      });
+    } catch (error) {
+      return next(new ErrorHandler(error.message, 400));
+    }
+  })
+);
+
+
 // get all products with pagination
 router.get(
   "/get-all-products",
