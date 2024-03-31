@@ -49,6 +49,7 @@ import {
   ShopInboxPage,
   ShopCreateCategoryPage,
   ShopBulkImportPage,
+  ShopEditProductPage,
 } from "./routes/ShopRoutes.js";
 import {
   AdminDashboardPage,
@@ -72,20 +73,11 @@ const App = () => {
     setStripeApiKey(data.stripeApikey);
   }
   useEffect(() => {
-    //  axios.get(`${server}/user/getuser`,{withCredentials:true}).then((res)=>{
-    //   toast.success(res.data.message);
-    //   //console.log(res.data);
-    //  }).catch((err) =>{
-    //   toast.error(err.response.data.message);
-    //  })
     Store.dispatch(loadUser());
     Store.dispatch(loadSeller());
     Store.dispatch(getAllProducts());
     Store.dispatch(getAllEvents());
     getStripeApikey();
-    // if(isSeller){
-    //   return <Navigate to="/shop" replace/>
-    // }
   }, []);
   // console.log(stripeApikey)
   return (
@@ -220,6 +212,14 @@ const App = () => {
           element={
             <SellerProtectedRoute>
               <ShopCreateProduct />
+            </SellerProtectedRoute>
+          }
+        />
+          <Route
+          path="/dashboard-edit-product/:id"
+          element={
+            <SellerProtectedRoute>
+              <ShopEditProductPage />
             </SellerProtectedRoute>
           }
         />

@@ -58,6 +58,83 @@ router.post(
     }
   })
 );
+// update product
+router.post(
+  "/update-product",
+  catchAsyncErrors(async (req, res, next) => {
+    try {
+      const productId = req.body.id;
+      const product = await Product.findById(productId);
+      if (!product) {
+        return next(new ErrorHandler("Product not found!", 404));
+      } else {
+        let images = [];
+
+        if (typeof req.body.images === "string") {
+          images.push(req.body.images);
+        } else {
+          images = req.body.images;
+        }
+
+        const imagesLinks = [];
+
+        for (let i = 0; i < images.length; i++) {
+          let existingImage = product.images.find(
+            (img) => img.url === images[i]
+          );
+
+          if (existingImage) {
+            // If image already exists in product images, reuse existing data
+            imagesLinks.push(existingImage);
+          } else {
+            // Upload image to Cloudinary
+            const result = await cloudinary.v2.uploader.upload(images[i], {
+              folder: "products",
+            });
+
+            imagesLinks.push({
+              public_id: result.public_id,
+              url: result.secure_url,
+            });
+          }
+        }
+
+        const productData = req.body;
+        productData.images = imagesLinks;
+
+        const updatedProduct = await Product.findByIdAndUpdate(
+          productId,
+          productData,
+          { new: true }
+        );
+
+        res.status(200).json({
+          success: true,
+          product: updatedProduct,
+        });
+      }
+    } catch (error) {
+      return next(new ErrorHandler(error, 400));
+    }
+  })
+);
+
+// get product by id
+router.get(
+  "/get-all-product/:id",
+  catchAsyncErrors(async (req, res, next) => {
+    try {
+      const products = await Product.findById(req.params.id);
+
+      res.status(201).json({
+        success: true,
+        products,
+      });
+    } catch (error) {
+      return next(new ErrorHandler(error, 400));
+    }
+  })
+);
 // get all products of a shop
 router.get(
   "/get-all-products-shop/:id",
@@ -86,13 +163,13 @@ router.delete(
         return next(new ErrorHandler("Product is not found with this id", 404));
       }    
 
-      for (let i = 0; 1 < product.images.length; i++) {
+      for (let i = 0; i< product.images.length; i++) {
         const result = await cloudinary.v2.uploader.destroy(
           product.images[i].public_id
         );
       }
     
-      await product.remove();
+      await Product.findByIdAndDelete(req.params.id);
 
       res.status(201).json({
         success: true,
@@ -104,22 +181,52 @@ router.delete(
   })
 );
 
-// get all products
+// get all products with pagination
 router.get(
   "/get-all-products",
   catchAsyncErrors(async (req, res, next) => {
-    try {
-      const products = await Product.find().sort({ createdAt: -1 });
+    const page = parseInt(req.query.page) || 1; // Current page number
+    const limit = parseInt(req.query.limit) || 10; // Products per page
 
-      res.status(201).json({
+    const startIndex = (page - 1) * limit;
+    const endIndex = page * limit;
+
+    const results = {};
+
+    results.totalCount = await Product.countDocuments().exec();
+
+    if (endIndex < results.totalCount) {
+      results.next = {
+        page: page + 1,
+        limit: limit
+      };
+    }
+
+    if (startIndex > 0) {
+      results.previous = {
+        page: page - 1,
+        limit: limit
+      };
+    }
+
+    try {
+      results.products = await Product.find()
+        .sort({ createdAt: -1 })
+        .limit(limit)
+        .skip(startIndex)
+        .exec();
+
+      res.status(200).json({
         success: true,
-        products,
+        products:results.products,
+        productCount:results.totalCount,
       });
     } catch (error) {
       return next(new ErrorHandler(error, 400));
     }
   })
 );
+
 // review for a product
 router.put(
   "/create-new-review",

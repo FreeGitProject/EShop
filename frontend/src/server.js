@@ -11,6 +11,7 @@
 export const server = process.env.REACT_APP_SERVER;
 export const backend_url = process.env.REACT_APP_BACKEND_URL;
 export const soketEndPoint = process.env.REACT_APP_SOCKET_ENDPOINT;
+export const pageSize = process.env.REACT_APP_PAGE_SIZE;
 
 
 

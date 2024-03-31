@@ -1,13 +1,15 @@
 import { Button } from '@material-ui/core';
 import { DataGrid } from '@material-ui/data-grid';
 import React,{ useEffect } from 'react';
-import { AiOutlineDelete, AiOutlineEye } from 'react-icons/ai';
+import { AiOutlineDelete, AiOutlineEye,AiOutlineEdit  } from 'react-icons/ai';
 import { useDispatch, useSelector } from 'react-redux';
 import { Link } from 'react-router-dom';
 import { getAllProductsShop } from '../../reducx/actions/product';
 import { deleteProduct } from '../../reducx/actions/product';
 import Loader from '../Layout/Loader';
+import { toast } from 'react-toastify';
  
+//import { MdEdit } from 'react-icons/md'; // Add import for Edit icon
 const AllProducts = () => {
   const { products, isLoading } = useSelector((state) => state.products);
   const { seller } = useSelector((state) => state.seller);
@@ -18,9 +20,19 @@ const AllProducts = () => {
     dispatch(getAllProductsShop(seller._id));
   }, [dispatch]);
 
-  const handleDelete = (id) => {
-    dispatch(deleteProduct(id));
-    window.location.reload();
+  const handleDelete = async (id) => {
+    try {
+      const response = await dispatch(deleteProduct(id));
+      if (response && response.message) {
+        toast.success(response.message); // Display success message if available
+      } else {
+        throw new Error("Response message not found");
+      }
+     // window.location.reload();
+    } catch (error) {
+      toast.error("Failed to delete product"); // Display a generic error message
+      console.error(error); // Log the error for debugging purposes
+    }
   };
 
   const columns = [
@@ -29,6 +41,23 @@ const AllProducts = () => {
       headerName: 'Product Id',
       minWidth: 150,
       flex: 1,
+    },
+    {
+      field: "image",
+      headerName: "Image",
+      flex: 1,
+      minWidth: 30,
+      minHeight: 30,
+      sortable: false,
+      renderCell: (params) => {
+        return (
+          <img
+            src={params.row.image}
+            alt={"params.row.name"}
+            style={{ width: 50, height: 50, borderRadius: "50%" }}
+          />
+        );
+      },
     },
     {
       field: 'name',
@@ -77,6 +106,25 @@ const AllProducts = () => {
       },
     },
     {
+      field: 'Edit', // Define field for edit icon
+      flex: 0.7,
+      minWidth: 80,
+      headerName: '',
+      type: 'number',
+      sortable: false,
+      renderCell: (params) => {
+        return (
+          <>
+            <Link to={`/dashboard-edit-product/${params.id}`}> {/* Assuming you have an edit page with route /edit/:id */}
+              <Button>
+                <AiOutlineEdit size={20} /> {/* Use Material-UI Edit icon */}
+              </Button>
+            </Link>
+          </>
+        );
+      },
+    },
+    {
       field: 'Delete',
       flex: 0.7,
       minWidth: 80,
@@ -105,6 +153,7 @@ const AllProducts = () => {
         price: '₱ ' + item.discountPrice,
         Stock: item.stock,
         sold: item?.sold_out,
+        image: item.images[0]?.url,
       });
     });
 
