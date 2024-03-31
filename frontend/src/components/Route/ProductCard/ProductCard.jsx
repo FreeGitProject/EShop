@@ -103,7 +103,8 @@ const ProductCard = ({ data,isEvent }) => {
           </div>
         </Link>
         {/* side options */}
-        <div>
+        <div className="absolute top-0 right-0">
+          <div className={`transition-transform duration-300 ease-in-out transform ${hovered ? 'translate-x-50' : 'translate-x-3'}`}>
         {hovered && (
           <>
           {click ? (
@@ -142,8 +143,8 @@ const ProductCard = ({ data,isEvent }) => {
           </>
         )
           }
+          </div>
           {open ? <ProductDetailsCard setOpen={setOpen} data={data} /> : null}
-          
         </div>
       </div>
     </>
