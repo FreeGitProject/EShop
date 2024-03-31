@@ -43,6 +43,23 @@ const AllProducts = () => {
       flex: 1,
     },
     {
+      field: "image",
+      headerName: "Image",
+      flex: 1,
+      minWidth: 30,
+      minHeight: 30,
+      sortable: false,
+      renderCell: (params) => {
+        return (
+          <img
+            src={params.row.image}
+            alt={"params.row.name"}
+            style={{ width: 50, height: 50, borderRadius: "50%" }}
+          />
+        );
+      },
+    },
+    {
       field: 'name',
       headerName: 'Name',
       minWidth: 180,
@@ -136,6 +153,7 @@ const AllProducts = () => {
         price: '₱ ' + item.discountPrice,
         Stock: item.stock,
         sold: item?.sold_out,
+        image: item.images[0]?.url,
       });
     });
 
