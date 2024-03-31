@@ -138,18 +138,19 @@ export const deleteProduct = (id) => async (dispatch) => {
   }
 };
 
-// get all products
-export const getAllProducts = () => async (dispatch) => {
+// get all products with pagination
+export const getAllProducts = (page = 1, limit = 10) => async (dispatch) => {
   try {
     dispatch({
       type: "getAllProductsRequest",
     });
 
-    const { data } = await axios.get(`${server}/product/get-all-products`);
+    const { data } = await axios.get(`${server}/product/get-all-products?page=${page}&limit=${limit}`);
     dispatch({
       type: "getAllProductsSuccess",
       payload: data.products,
     });
+    return data; // Return the fetched products
   } catch (error) {
     dispatch({
       type: "getAllProductsFailed",
@@ -157,5 +158,7 @@ export const getAllProducts = () => async (dispatch) => {
     });
   }
 };
+
+
 
 

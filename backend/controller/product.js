@@ -165,22 +165,52 @@ router.delete(
   })
 );
 
-// get all products
+// get all products with pagination
 router.get(
   "/get-all-products",
   catchAsyncErrors(async (req, res, next) => {
-    try {
-      const products = await Product.find().sort({ createdAt: -1 });
+    const page = parseInt(req.query.page) || 1; // Current page number
+    const limit = parseInt(req.query.limit) || 10; // Products per page
 
-      res.status(201).json({
+    const startIndex = (page - 1) * limit;
+    const endIndex = page * limit;
+
+    const results = {};
+
+    results.totalCount = await Product.countDocuments().exec();
+
+    if (endIndex < results.totalCount) {
+      results.next = {
+        page: page + 1,
+        limit: limit
+      };
+    }
+
+    if (startIndex > 0) {
+      results.previous = {
+        page: page - 1,
+        limit: limit
+      };
+    }
+
+    try {
+      results.products = await Product.find()
+        .sort({ createdAt: -1 })
+        .limit(limit)
+        .skip(startIndex)
+        .exec();
+
+      res.status(200).json({
         success: true,
-        products,
+        products:results.products,
+        productCount:results.totalCount,
       });
     } catch (error) {
       return next(new ErrorHandler(error, 400));
     }
   })
 );
+
 // review for a product
 router.put(
   "/create-new-review",

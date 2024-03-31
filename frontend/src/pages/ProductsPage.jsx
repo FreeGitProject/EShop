@@ -1,52 +1,119 @@
 import React, { useEffect, useState } from "react";
-import { useSelector } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
 import { useSearchParams } from "react-router-dom";
 import Footer from "../components/Layout/Footer";
 import Header from "../components/Layout/Header";
-//import { productData } from "../static/data";
-//import Loader from "../components/Layout/Loader";
+import Loader from "../components/Layout/Loader";
 import ProductCard from "../components/Route/ProductCard/ProductCard";
 import styles from "../styles/styles";
+//import { getAllProducts } from "../reducx/actions/product";
+import { pageSize ,server} from "../server";
+import axios from "axios";
 
 const ProductsPage = () => {
   const [searchParams] = useSearchParams();
   const categoryData = searchParams.get("category");
-  const {allProducts,isLoading} = useSelector((state) => state.products);
+  const { isLoading } = useSelector((state) => state.products);
   const [data, setData] = useState([]);
+  const [totalProductCount, setTotalProductCount] = useState(null);
+  const [currentPage, setCurrentPage] = useState(1);
+  //const dispatch = useDispatch();
+  const productsPerPage = parseInt(pageSize);
 
   useEffect(() => {
-    if (categoryData === null) {
-      const d = allProducts;// && allProducts.sort((a,b) =>a.sold_out - b.sold_out);
-      setData(d);
-    } else {
-      const d =
-      allProducts && allProducts.filter((i) => i.category === categoryData);
-      setData(d);
+    const fetchData = async () => {
+      try {
+        const { data } = await axios.get(`${server}/product/get-all-products?page=${currentPage}&limit=${productsPerPage}`);
+        //// current senario we get direct to the endpoint not dispatch
+        // const data = await dispatch(
+        //   getAllProducts(currentPage, productsPerPage)
+        // );
+        const fetchedProducts = data.products;
+        setTotalProductCount(data.productCount);
+        let filteredProducts = fetchedProducts;
+        if (categoryData !== null) {
+          filteredProducts = fetchedProducts.filter(
+            (product) => product.category === categoryData
+          );
+        }
+        setData(filteredProducts);
+      } catch (error) {
+        console.error("Error fetching products:", error);
+      }
+    };
+
+    fetchData();
+    window.scrollTo(0, 0);
+  }, [currentPage, categoryData]);
+
+  ////[currentPage, categoryData, dispatch]
+
+  // Get current products
+  const currentProducts = data;
+
+  // Calculate total pages
+  const totalPages = Math.ceil(totalProductCount / productsPerPage);
+
+  // Change page
+  const nextPage = () => {
+    if (currentPage < totalPages) {
+      setCurrentPage(currentPage + 1);
     }
-    //    window.scrollTo(0,0);
-  }, [allProducts]);
+  };
+
+  const prevPage = () => {
+    if (currentPage > 1) {
+      setCurrentPage(currentPage - 1);
+    }
+  };
 
   return (
-  <>
-  
-      <div>
-      <Header activeHeading={3} />
-      <br />
-      <br />
-      <div className={`${styles.section}`}>
-        <div className="grid grid-cols-1 gap-[20px] md:grid-cols-2 md:gap-[25px] lg:grid-cols-4 lg:gap-[25px] xl:grid-cols-5 xl:gap-[30px] mb-12">
-          {data && data.map((i, index) => <ProductCard data={i} key={index} />)}
+    <>
+      {isLoading ? (
+        <Loader />
+      ) : (
+        <div>
+          <Header activeHeading={3} />
+          <br />
+          <br />
+          <div className={`${styles.section}`}>
+            <div className="grid grid-cols-1 gap-[20px] md:grid-cols-2 md:gap-[25px] lg:grid-cols-4 lg:gap-[25px] xl:grid-cols-5 xl:gap-[30px] mb-12">
+              {currentProducts &&
+                currentProducts.map((i, index) => (
+                  <ProductCard data={i} key={index} />
+                ))}
+            </div>
+            {data && data.length === 0 ? (
+              <h1 className="text-center w-full pb-[100px] text-[20px]">
+                No products Found!
+              </h1>
+            ) : null}
+            <div className="flex justify-center my-4">
+              {currentPage > 1 && (
+                <button
+                  onClick={prevPage}
+                  className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded mr-2"
+                >
+                  Previous
+                </button>
+              )}
+              <span className="text-gray-700">
+                Page {currentPage} of {totalPages}
+              </span>
+              {currentPage < totalPages && (
+                <button
+                  onClick={nextPage}
+                  className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded ml-2"
+                >
+                  Next
+                </button>
+              )}
+            </div>
+          </div>
+          <Footer />
         </div>
-        {data && data.length === 0 ? (
-          <h1 className="text-center w-full pb-[100px] text-[20px]">
-            No products Found!
-          </h1>
-        ) : null}
-      </div>
-      <Footer />
-    </div>
- 
-  </>
+      )}
+    </>
   );
 };
 
