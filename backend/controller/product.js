@@ -119,6 +119,22 @@ router.post(
   })
 );
 
+// get product by id
+router.get(
+  "/get-all-product/:id",
+  catchAsyncErrors(async (req, res, next) => {
+    try {
+      const products = await Product.findById(req.params.id);
+
+      res.status(201).json({
+        success: true,
+        products,
+      });
+    } catch (error) {
+      return next(new ErrorHandler(error, 400));
+    }
+  })
+);
 // get all products of a shop
 router.get(
   "/get-all-products-shop/:id",
