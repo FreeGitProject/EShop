@@ -45,6 +45,7 @@ router.post(
         const productData = req.body;
         productData.images = imagesLinks;
         productData.shop = shop;
+        productData.status = 1; // Set default status to "Draft"
 
         const product = await Product.create(productData);
 
@@ -224,7 +225,7 @@ router.delete(
 );
 
 
-// get all products with pagination
+// get all products with pagination to main Domain
 router.get(
   "/get-all-products",
   catchAsyncErrors(async (req, res, next) => {
@@ -236,39 +237,51 @@ router.get(
 
     const results = {};
 
-    results.totalCount = await Product.countDocuments().exec();
-
-    if (endIndex < results.totalCount) {
-      results.next = {
-        page: page + 1,
-        limit: limit
-      };
-    }
-
-    if (startIndex > 0) {
-      results.previous = {
-        page: page - 1,
-        limit: limit
-      };
-    }
-
     try {
-      results.products = await Product.find()
-        .sort({ createdAt: -1 })
-        .limit(limit)
-        .skip(startIndex)
-        .exec();
+      // Count total documents with isPublished as true
+     // results.totalCount = await Product.countDocuments({ isPublished: true }).exec();
+ // Count total documents with isPublished as true and status as 2 (Active)
+ results.totalCount = await Product.countDocuments({ isPublished: true, status: 2 }).exec();
+
+      if (endIndex < results.totalCount) {
+        results.next = {
+          page: page + 1,
+          limit: limit
+        };
+      }
+
+      if (startIndex > 0) {
+        results.previous = {
+          page: page - 1,
+          limit: limit
+        };
+      }
+
+       // Find products where isPublished is true and status is 2 (Active), sorted by createdAt in descending order
+       results.products = await Product.find({ isPublished: true, status: 2 })
+       .sort({ createdAt: -1 })
+       .limit(limit)
+       .skip(startIndex)
+       .exec();
+
+      // // Find products where isPublished is true, sorted by createdAt in descending order
+      // results.products = await Product.find({ isPublished: true })
+      //   .sort({ createdAt: -1 })
+      //   .limit(limit)
+      //   .skip(startIndex)
+      //   .exec();
 
       res.status(200).json({
         success: true,
-        products:results.products,
-        productCount:results.totalCount,
+        products: results.products,
+        productCount: results.totalCount,
       });
     } catch (error) {
       return next(new ErrorHandler(error, 400));
     }
   })
 );
+
 
 // review for a product
 router.put(
