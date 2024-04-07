@@ -56,8 +56,10 @@ export const updateProduct =
   originalPrice,
   discountPrice,
   stock,
+  status,
   shopId,
-  images
+  images,
+  isPublished,
 ) =>
 async (dispatch) => {
   try {
@@ -75,8 +77,10 @@ async (dispatch) => {
       originalPrice,
       discountPrice,
       stock,
+      status,
       shopId,
       images,
+      isPublished,
     );
     dispatch({
       type: "productUpdateSuccess",

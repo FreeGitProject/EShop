@@ -74,6 +74,23 @@ const productSchema = new mongoose.Schema({
     type: Number,
     default: 0,
   },
+   // Define status field
+   //0- none
+  // 1 - Draft
+  // 2 - Active
+  // 3 - Archived
+  // 4 - Discontinued
+  status: {
+    type: Number,
+    enum: [0, 1, 2, 3,4], // Define enumeration for the status
+    default: 1, // Set the default status value
+    required: true, // Make status field required
+  },
+  isPublished: {
+    type: Boolean,
+    default: false, // Default value is false
+    required: false, // Not required
+  },
   createdAt: {
     type: Date,
     default: Date.now(),

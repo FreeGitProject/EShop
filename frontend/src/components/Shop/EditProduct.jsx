@@ -7,6 +7,7 @@ import { categoriesData } from "../../static/data";
 import { toast } from "react-toastify";
 import { server } from "../../server";
 import axios from "axios";
+import { ProductStatus } from "../../enums/enums"; // Import ProductStatus enum if not already imported
 
 const EditProduct = () => {
   const { id } = useParams(); // Get productId from URL params
@@ -24,6 +25,10 @@ const EditProduct = () => {
   const [originalPrice, setOriginalPrice] = useState();
   const [discountPrice, setDiscountPrice] = useState();
   const [stock, setStock] = useState();
+  const [status, setStatus] = useState(ProductStatus.Draft); // Default status Draft
+  const [editedStatus, setEditedStatus] = useState(null); // State to track edited status
+  const [showModal, setShowModal] = useState(false);
+  const [isPublished, setIsPublished] = useState(false);
 
   useEffect(() => {
     if (error) {
@@ -47,6 +52,8 @@ const EditProduct = () => {
       setOriginalPrice(productToUpdate.originalPrice);
       setDiscountPrice(productToUpdate.discountPrice);
       setStock(productToUpdate.stock);
+      setStatus(productToUpdate.status);
+      setIsPublished(productToUpdate.isPublished);
       // Handle images separately
       if (productToUpdate.images && productToUpdate.images.length > 0) {
         const imageUrls = productToUpdate.images.map((image) => image.url);
@@ -75,21 +82,23 @@ const EditProduct = () => {
   const handleUpdate = async (e) => {
     e.preventDefault();
     const imageNew = [];
-  // Use Promise.all to await all image uploads
-  await Promise.all(
-    images.map(async (image) => {
-      // Check if the image is already uploaded (not base64 data URI)
-      if (!image.startsWith("data:image")) {
-        imageNew.push(image);
-      } else {
-        // Upload image to Cloudinary
-        const { data: { imageUrl } } = await axios.post(`${server}/cloudinary/upload-image`, { image });
-        imageNew.push(imageUrl);
-      }
-    })
-  );
-  // Overwrite existing image data with new image data
-  setImages(imageNew);
+    // Use Promise.all to await all image uploads
+    await Promise.all(
+      images.map(async (image) => {
+        // Check if the image is already uploaded (not base64 data URI)
+        if (!image.startsWith("data:image")) {
+          imageNew.push(image);
+        } else {
+          // Upload image to Cloudinary
+          const {
+            data: { imageUrl },
+          } = await axios.post(`${server}/cloudinary/upload-image`, { image });
+          imageNew.push(imageUrl);
+        }
+      })
+    );
+    // Overwrite existing image data with new image data
+    setImages(imageNew);
     dispatch(
       updateProduct({
         id,
@@ -100,15 +109,106 @@ const EditProduct = () => {
         originalPrice,
         discountPrice,
         stock,
+        status: editedStatus || status, // Use editedStatus if available, otherwise use status
         shopId: seller._id,
         images,
+        isPublished,
       })
     );
+    setShowModal(false); // Close the modal after updating
   };
-
+  const handleStatusChange = (newStatus) => {
+    // if (newStatus !== status) {
+    setEditedStatus(newStatus);
+    setShowModal(true); // Open the modal for confirmation
+    //}
+  };
+  const handleCheckboxChange = () => {
+    setIsPublished(!isPublished);
+  };
   return (
     <div className="w-[90%] 800px:w-[50%] bg-white  shadow h-[80vh] rounded-[4px] p-3 overflow-y-scroll">
       <h5 className="text-[30px] font-Poppins text-center">Edit Product</h5>
+      {/* Status Start */}
+      <div className="col-sm-6 col-6 text-right mt-2">
+        <div className="col-sm-12 col-12 float-right">
+          {/* Show buttons based on status */}
+          {status === ProductStatus.Draft && (
+            <button
+              type="button"
+              className="btn bg-yellow-500 text-xs px-2 py-1 mr-2"
+              onClick={() => handleStatusChange(ProductStatus.Draft)}
+            >
+              Draft
+            </button>
+          )}
+          {status === ProductStatus.Active && (
+            <button
+              type="button"
+              className="btn bg-green-500 text-xs px-2 py-1 mr-2"
+              onClick={() => handleStatusChange(ProductStatus.Active)}
+            >
+              Active
+            </button>
+          )}
+          {status === ProductStatus.Archived && (
+            <button
+              type="button"
+              className="btn bg-blue-500 text-xs px-2 py-1 mr-2"
+              onClick={() => handleStatusChange(ProductStatus.Archived)}
+            >
+              Archived
+            </button>
+          )}
+          {status === ProductStatus.Discontinued && (
+            <button
+              type="button"
+              className="btn bg-red-500 text-xs px-2 py-1 mr-2"
+              onClick={() => handleStatusChange(ProductStatus.Discontinued)}
+            >
+              Discontinued
+            </button>
+          )}
+        </div>
+      </div>
+      {/* Modal */}
+      {showModal && (
+        <div className="fixed inset-0 z-50 overflow-auto bg-black bg-opacity-50 flex items-center justify-center">
+          <div className="bg-white p-5 rounded-md max-w-md">
+            <h2 className="text-lg font-semibold mb-3">Change Status</h2>
+            <div>
+              <label className="pb-2">
+                New Status <span className="text-red-500">*</span>
+              </label>
+              <select
+                className="w-full mt-2 border h-[35px] rounded-[5px]"
+                value={editedStatus}
+                onChange={(e) => setEditedStatus(parseInt(e.target.value))}
+              >
+                <option value={ProductStatus.Draft}>Draft</option>
+                <option value={ProductStatus.Active}>Active</option>
+                <option value={ProductStatus.Archived}>Archived</option>
+                <option value={ProductStatus.Discontinued}>Discontinued</option>
+              </select>
+            </div>
+            <div className="flex justify-end mt-3">
+              <button
+                className="bg-gray-300 hover:bg-gray-400 text-gray-800 font-bold py-2 px-4 rounded mr-2"
+                onClick={() => setShowModal(false)}
+              >
+                Cancel
+              </button>
+              <button
+                className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
+                 onClick={handleUpdate}
+              >
+                Update
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+      {/* Status End */}
       {/* update product form */}
       <form onSubmit={handleUpdate}>
         <br />
@@ -241,6 +341,34 @@ const EditProduct = () => {
               ))}
           </div>
           <br />
+           {/* IsPublied start */}
+           <div className="flex items-center">
+            <label className="mr-4">Published</label>
+            <label className="themeSwitcherTwo relative inline-flex cursor-pointer select-none items-center">
+              <input
+                type="checkbox"
+                checked={isPublished}
+                onChange={handleCheckboxChange}
+                className="sr-only"
+              />
+              <span className="label flex items-center text-sm font-medium text-black">
+                {isPublished ? "Yes" : "No"}
+              </span>
+              <span
+                className={`slider flex h-8 w-[60px] items-center rounded-full p-1 duration-200 ${
+                  isPublished ? "bg-[#227529]" : "bg-[#CCCCCE]"
+                }`}
+              >
+                <span
+                  className={`dot h-6 w-6 rounded-full bg-white duration-200 ${
+                    isPublished ? "translate-x-[28px]" : ""
+                  }`}
+                ></span>
+              </span>
+            </label>
+          </div>
+          <br />
+          {/* IsPublied start */}
           <div>
             <input
               type="submit"
