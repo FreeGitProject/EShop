@@ -156,6 +156,18 @@ const AllProducts = () => {
       },
     },
     {
+      field: "status",
+      headerName: "Status",
+      minWidth: 50,
+      flex: 1,
+    },
+    {
+      field: "isPublished",
+      headerName: "Published",
+      minWidth: 50,
+      flex: 1,
+    },
+    {
       field: "Edit",
       flex: 0.7,
       minWidth: 80,
@@ -204,6 +216,8 @@ const AllProducts = () => {
         Stock: item.stock,
         sold: item?.sold_out,
         image: item.images[0]?.url,
+        status:item.status,
+        isPublished:item.isPublished,
       });
     });
 
