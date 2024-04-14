@@ -13,6 +13,10 @@ const importDataSchema = new mongoose.Schema({
     type: String,
     required: true
   },
+  shopId: {
+    type: String,
+    required: true,
+  },
   date: {
     type: Date,
     default: Date.now

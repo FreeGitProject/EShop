@@ -1,6 +1,7 @@
 import { DataGrid } from "@material-ui/data-grid";
 import axios from "axios";
 import React, { useEffect, useState } from "react";
+import { useSelector } from "react-redux";
 import { RxCross1 } from "react-icons/rx";
 import styles from "../../styles/styles";
 import Loader from "../Layout/Loader";
@@ -13,11 +14,11 @@ const BulkImport = () => {
   const [open, setOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [excelRows, setExcelRows] = useState([]);
-
+  const { seller } = useSelector((state) => state.seller);
   useEffect(() => {
     const fetchImportData = async () => {
       try {
-        const response = await axios.get(`${server}/importData/import-data`, {
+        const response = await axios.get(`${server}/importData/import-data/${seller._id}`, {
           withCredentials: true,
         });
         setImportData(response.data);
@@ -53,7 +54,7 @@ const BulkImport = () => {
     // console.log(excelRows)
     try {
       const response = await axios.post(
-        `${server}/importData/import-products`,
+        `${server}/importData/import-products/${seller._id}`,
         excelRows,
         { withCredentials: true }
       );
@@ -150,7 +151,7 @@ const BulkImport = () => {
                 )}
                 {/* Add button to download sample file */}
                 <a
-                  href="/frontend/samplefile/EshopProduct.csv"
+                  href="/samplefile/EshopProduct.csv"
                   download="EshopProduct.csv"
                   className="text-blue-500 hover:text-blue-600 underline block mt-4 text-center"
                 >
