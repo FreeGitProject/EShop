@@ -186,6 +186,12 @@ const ExcelViewer = ({ excelRows }) => {
     return excelRows?.slice(startIndex, endIndex);
   }, [excelRows, excurrentPage]);
 
+  const handleNextPage = () => {
+    if (excurrentPage < extotalPages - 1) {
+      setExCurrentPage(excurrentPage + 1);
+    }
+  };
+
   return (
     <div className="viewer">
       {excelRows ? (
@@ -193,6 +199,7 @@ const ExcelViewer = ({ excelRows }) => {
           <table className="table w-full border-collapse border-gray-300">
             <thead>
               <tr>
+                <th className="border border-gray-400">S.No</th> {/* Add the S.No column here */}
                 {Object.keys(paginatedRows?.[0]).map((key) => (
                   <th key={key} className="border border-gray-400">{key}</th>
                 ))}
@@ -201,8 +208,9 @@ const ExcelViewer = ({ excelRows }) => {
             <tbody>
               {paginatedRows?.map((individualexcelRows, index) => (
                 <tr key={index}>
+                  <td className="border border-gray-400">{index + 1 + (excurrentPage * EXCELPAGE_SIZE)}</td> {/* Updated index calculation */}
                   {Object.keys(individualexcelRows).map((key) => (
-                    <td key={key} className="border border-gray-400 ">{individualexcelRows[key]}</td>
+                    <td key={key} className="border border-gray-400">{individualexcelRows[key]}</td>
                   ))}
                 </tr>
               ))}
@@ -212,7 +220,7 @@ const ExcelViewer = ({ excelRows }) => {
           <div>
             <button onClick={() => setExCurrentPage(excurrentPage - 1)} disabled={excurrentPage === 0}>Previous</button>
             <span> Page {excurrentPage + 1} of {extotalPages} </span>
-            <button onClick={() => setExCurrentPage(excurrentPage + 1)} disabled={excurrentPage === extotalPages - 1}>Next</button>
+            <button onClick={handleNextPage} disabled={excurrentPage === extotalPages - 1}>Next</button>
           </div>
         </div>
       ) : (
