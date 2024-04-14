@@ -1,6 +1,6 @@
 import { DataGrid } from "@material-ui/data-grid";
 import axios from "axios";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState ,useMemo} from "react";
 import { useSelector } from "react-redux";
 import { RxCross1 } from "react-icons/rx";
 import styles from "../../styles/styles";
@@ -13,14 +13,17 @@ const BulkImport = () => {
   const [importData, setImportData] = useState([]);
   const [open, setOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
-  const [excelRows, setExcelRows] = useState([]);
+  const [excelRows, setExcelRows] = useState(null);
   const { seller } = useSelector((state) => state.seller);
   useEffect(() => {
     const fetchImportData = async () => {
       try {
-        const response = await axios.get(`${server}/importData/import-data/${seller._id}`, {
-          withCredentials: true,
-        });
+        const response = await axios.get(
+          `${server}/importData/import-data/${seller._id}`,
+          {
+            withCredentials: true,
+          }
+        );
         setImportData(response.data);
         setIsLoading(false);
       } catch (error) {
@@ -128,7 +131,10 @@ const BulkImport = () => {
                   <RxCross1
                     size={30}
                     className="cursor-pointer text-gray-600 hover:text-gray-800"
-                    onClick={() => setOpen(false)}
+                    onClick={() => {
+                      setOpen(false);
+                      setExcelRows(null);
+                    }}
                   />
                 </div>
                 <h5 className="text-3xl font-semibold text-center mb-6 text-gray-800">
@@ -140,6 +146,7 @@ const BulkImport = () => {
                   onChange={readUploadFile}
                   className="mb-6 border border-gray-300 rounded-lg px-4 py-2 w-full focus:outline-none focus:border-blue-500"
                 />
+              <ExcelViewer excelRows={excelRows} />
                 <button
                   onClick={handleImport}
                   className="bg-blue-500 hover:bg-blue-600 text-white font-semibold px-6 py-3 rounded-lg mr-2 focus:outline-none"
@@ -165,5 +172,53 @@ const BulkImport = () => {
     </>
   );
 };
+// Assuming EXCELPAGE_SIZE is the number of rows to display per page
+const EXCELPAGE_SIZE = 5;
 
+const ExcelViewer = ({ excelRows }) => {
+  const [excurrentPage, setExCurrentPage] = useState(0);
+
+  const extotalPages = Math.ceil(excelRows?.length / EXCELPAGE_SIZE);
+
+  const paginatedRows = useMemo(() => {
+    const startIndex = excurrentPage * EXCELPAGE_SIZE;
+    const endIndex = startIndex + EXCELPAGE_SIZE;
+    return excelRows?.slice(startIndex, endIndex);
+  }, [excelRows, excurrentPage]);
+
+  return (
+    <div className="viewer">
+      {excelRows ? (
+        <div className="table-responsive">
+          <table className="table w-full border-collapse border-gray-300">
+            <thead>
+              <tr>
+                {Object.keys(paginatedRows?.[0]).map((key) => (
+                  <th key={key} className="border border-gray-400">{key}</th>
+                ))}
+              </tr>
+            </thead>
+            <tbody>
+              {paginatedRows?.map((individualexcelRows, index) => (
+                <tr key={index}>
+                  {Object.keys(individualexcelRows).map((key) => (
+                    <td key={key} className="border border-gray-400 ">{individualexcelRows[key]}</td>
+                  ))}
+                </tr>
+              ))}
+            </tbody>
+          </table>
+          {/* Pagination controls */}
+          <div>
+            <button onClick={() => setExCurrentPage(excurrentPage - 1)} disabled={excurrentPage === 0}>Previous</button>
+            <span> Page {excurrentPage + 1} of {extotalPages} </span>
+            <button onClick={() => setExCurrentPage(excurrentPage + 1)} disabled={excurrentPage === extotalPages - 1}>Next</button>
+          </div>
+        </div>
+      ) : (
+        <div>No File is uploaded yet!</div>
+      )}
+    </div>
+  );
+};
 export default BulkImport;
