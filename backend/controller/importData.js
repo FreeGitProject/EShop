@@ -12,12 +12,12 @@ const ErrorHandler = require("../utils/ErrorHandler");
 
 // Endpoint to handle product import
 router.post(
-    "/import-products",
+    "/import-products/:id",
     isSeller,
     catchAsyncErrors(async (req, res, next) => {
       try {
         const products = req.body;
-  
+        const shopId= req.params.id ;
         // Check if products array is empty or not provided
         if (!Array.isArray(products) || products.length === 0) {
           return next(new ErrorHandler("Please provide product data.", 400));
@@ -100,6 +100,7 @@ router.post(
           status: "Success", // or 'Failed' based on import status
           by: "test", // Assuming user is authenticated and user ID is accessible from request
           type: "Product", // Specify the type of import
+          shopId:shopId,
           count: createdProducts.length, // Count of products imported
         };
         await ImportData.create(importData);
@@ -117,12 +118,12 @@ router.post(
   );
   // Endpoint to get import data
   router.get(
-    "/import-data",
+    "/import-data/:id",
     isSeller,
     catchAsyncErrors(async (req, res, next) => {
       try {
         // Fetch import data from database
-        const importData = await ImportData.find();
+        const importData = await ImportData.find({ shopId: req.params.id });
   
         res.status(200).json(importData);
       } catch (error) {
