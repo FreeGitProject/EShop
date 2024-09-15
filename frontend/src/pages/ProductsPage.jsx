@@ -17,10 +17,14 @@ const ProductsPage = () => {
   const [data, setData] = useState([]);
   const [totalProductCount, setTotalProductCount] = useState(null);
   const [currentPage, setCurrentPage] = useState(1);
+  const [islodingg, setislodingg] = useState(false);
+
   //const dispatch = useDispatch();
   const productsPerPage = parseInt(pageSize);
 
+  console.log("isLoading",isLoading);
   useEffect(() => {
+    setislodingg(true);
     const fetchData = async () => {
       try {
         const { data } = await axios.get(`${server}/product/get-all-products?page=${currentPage}&limit=${productsPerPage}`);
@@ -37,13 +41,15 @@ const ProductsPage = () => {
           );
         }
         setData(filteredProducts);
+        setislodingg(false);
       } catch (error) {
         console.error("Error fetching products:", error);
       }
     };
 
     fetchData();
-    window.scrollTo(0, 0);
+    //looks not good for product page unnecessary scrollup 
+    //window.scrollTo(0, 0);
   }, [currentPage, categoryData]);
 
   ////[currentPage, categoryData, dispatch]
@@ -69,13 +75,13 @@ const ProductsPage = () => {
 
   return (
     <>
-      {isLoading ? (
+      <Header activeHeading={3} />
+      <br />
+      <br />
+      {islodingg ? (
         <Loader />
       ) : (
         <div>
-          <Header activeHeading={3} />
-          <br />
-          <br />
           <div className={`${styles.section}`}>
             <div className="grid grid-cols-1 gap-[20px] md:grid-cols-2 md:gap-[25px] lg:grid-cols-4 lg:gap-[25px] xl:grid-cols-5 xl:gap-[30px] mb-12">
               {currentProducts &&
@@ -85,7 +91,7 @@ const ProductsPage = () => {
             </div>
             {data && data.length === 0 ? (
               <h1 className="text-center w-full pb-[100px] text-[20px]">
-                No products Found!
+                No products found!
               </h1>
             ) : null}
             <div className="flex justify-center my-4">
@@ -110,11 +116,10 @@ const ProductsPage = () => {
               )}
             </div>
           </div>
-          <Footer />
         </div>
       )}
+      <Footer />
     </>
-  );
-};
+  )};
 
 export default ProductsPage;

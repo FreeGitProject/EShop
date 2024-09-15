@@ -6,6 +6,7 @@ import Loader from "../components/Layout/Loader";
 
 const EventsPage = () => {
   const { allEvents, isLoading } = useSelector((state) => state.events);
+  //console.log("allEvents",allEvents);
   return (
     <>
       {isLoading ? (
@@ -13,7 +14,7 @@ const EventsPage = () => {
       ) : (
         <div>
           <Header activeHeading={4} />
-          <EventCard active={true} data={allEvents && allEvents[0]} />
+          <EventCard active={true} dataList={allEvents} />
         </div>
       )}
     </>
