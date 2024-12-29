@@ -18,6 +18,7 @@ import { addTocart } from "../../reducx/actions/cart";
 import { toast } from "react-toastify";
 import Ratings from "./Ratings";
 import axios from "axios";
+import ImageMagnifier from "../common/ImageMagnifier";
 
 const ProductDetails = ({ data }) => {
   const { wishlist } = useSelector((state) => state.wishlist);
@@ -119,10 +120,14 @@ const ProductDetails = ({ data }) => {
             <div className="block w-full 800px:flex justify-between">
               <div className="w-full 800px:w-[50%] p-5">
                 <div className="w-full h-[600px] border border-qgray-border flex justify-center items-center overflow-hidden relative mb-3">
-                  <img
+                  <ImageMagnifier
                     src={`${data && data.images[select]?.url}`}
-                    alt=""
-                    class="object-contain"
+                    width={300}
+                    height={200}
+                    magnifierHeight={100}
+                    magnifierWidth={100}
+                    zoomLevel={2}
+                    alt="Sample Image"
                   />
                 </div>
 
