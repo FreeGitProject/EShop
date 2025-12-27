@@ -14,6 +14,12 @@ export const soketEndPoint = process.env.REACT_APP_SOCKET_ENDPOINT;
 export const pageSize = process.env.REACT_APP_PAGE_SIZE;
 
 
+ const dotnetserver = process.env.REACT_APP_DOT_NET_SERVER;
+//user 
+export const userCreate =dotnetserver +"/api/Users/create-user";
+export const userLogin =dotnetserver+"/api/Users/login";
+export const getUser =dotnetserver+"/api/Users/getUser";
+
 
 // const path = require("path");
 // // config
