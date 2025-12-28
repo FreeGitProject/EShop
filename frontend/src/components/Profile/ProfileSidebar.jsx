@@ -11,7 +11,7 @@ import { TbAddressBook } from "react-icons/tb";
 import { RxPerson } from "react-icons/rx";
 import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
-import { server } from "../../server";
+import { logout, server } from "../../server";
 import { toast } from "react-toastify";
 import { useSelector } from "react-redux";
 
@@ -20,7 +20,7 @@ const ProfileSidebar = ({ setActive, active }) => {
   const { user } = useSelector((state) => state.user);
   const logoutHandler = () => {
     axios
-      .get(`${server}/user/logout`, { withCredentials: true })
+      .get(`${logout}`, { withCredentials: true })
       .then((res) => {
         toast.success(res.data.message);
         window.location.reload(true);

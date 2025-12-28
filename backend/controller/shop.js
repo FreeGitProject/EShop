@@ -79,7 +79,7 @@ router.post("/create-shop", catchAsyncErrors(async (req, res, next) => {
 const createActivationToken = (seller) => {
     return jwt.sign(seller, process.env.ACTIVATION_SECRET, {
       expiresIn: "5m",
-    });
+    }); 
   };
 
  // activate user

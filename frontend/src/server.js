@@ -19,6 +19,9 @@ export const pageSize = process.env.REACT_APP_PAGE_SIZE;
 export const userCreate =dotnetserver +"/api/Users/create-user";
 export const userLogin =dotnetserver+"/api/Users/login";
 export const getUser =dotnetserver+"/api/Users/getUser";
+export const activation =dotnetserver+"/api/Users/activation";
+export const uploadAvatar =dotnetserver+"/api/Users/upload-avatar";
+export const logout =dotnetserver+"/api/Users/logout";
 
 
 // const path = require("path");
