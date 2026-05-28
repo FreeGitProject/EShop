@@ -12,7 +12,7 @@
     "@testing-library/jest-dom": "^5.17.0",
     "@testing-library/react": "^13.4.0",
     "@testing-library/user-event": "^13.5.0",
-    "axios": "^1.6.7",
+    "axios": "^1.15.2",
     "country-state-city": "^3.2.1",
     "os-browserify": "^0.3.0",
     "path-browserify": "^1.0.1",
@@ -29,7 +29,7 @@
     "redux-thunk": "^3.1.0",
     "redux-toolkit": "^1.1.2",
     "slick-carousel": "^1.8.1",
-    "socket.io-client": "^4.7.4",
+    "socket.io-client": "^4.8.3",
     "timeago.js": "^4.0.2",
     "web-vitals": "^2.1.4",
     "xlsx": "^0.18.5"
@@ -60,7 +60,7 @@
   },
   "devDependencies": {
     "autoprefixer": "^10.4.17",
-    "postcss": "^8.4.33",
+    "postcss": "^8.5.10",
     "tailwindcss": "^3.4.1"
   }
 }
